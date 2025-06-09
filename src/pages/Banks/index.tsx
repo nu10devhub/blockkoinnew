@@ -35,6 +35,7 @@ import {
   Close as CloseIcon,
 } from '@mui/icons-material';
 import { Building2, Globe } from 'lucide-react';
+import AddBankDialog from '../../components/Dialogs/AddBankDialog';
 
 interface Bank {
   id: number;
@@ -48,6 +49,8 @@ interface Bank {
   isIntlDefault: boolean;
   logo?: string;
   type: 'domestic' | 'international';
+  address?: string;
+  country?: string;
 }
 
 const initialBanks: Bank[] = [
@@ -62,6 +65,7 @@ const initialBanks: Bank[] = [
     isDefault: true,
     isIntlDefault: false,
     type: 'domestic',
+    country: 'ZA',
   },
   {
     id: 2,
@@ -74,6 +78,7 @@ const initialBanks: Bank[] = [
     isDefault: false,
     isIntlDefault: false,
     type: 'domestic',
+    country: 'ZA',
   },
   {
     id: 3,
@@ -86,6 +91,7 @@ const initialBanks: Bank[] = [
     isDefault: false,
     isIntlDefault: false,
     type: 'domestic',
+    country: 'ZA',
   },
   {
     id: 4,
@@ -98,6 +104,7 @@ const initialBanks: Bank[] = [
     isDefault: true,
     isIntlDefault: false,
     type: 'international',
+    country: 'UK',
   },
   {
     id: 5,
@@ -110,6 +117,7 @@ const initialBanks: Bank[] = [
     isDefault: true,
     isIntlDefault: false,
     type: 'international',
+    country: 'INTL',
   },
   {
     id: 6,
@@ -122,6 +130,7 @@ const initialBanks: Bank[] = [
     isDefault: true,
     isIntlDefault: false,
     type: 'international',
+    country: 'INTL',
   },
 ];
 
@@ -165,22 +174,22 @@ const Banks = () => {
     ));
   };
 
-  const handleAddBank = () => {
+  const handleAddBank = (bankData: any) => {
     const newBank: Bank = {
       id: Math.max(...banks.map(b => b.id)) + 1,
-      rank: banks.filter(b => b.type === formData.type).length + 1,
-      name: formData.name,
-      accountNo: formData.accountNo,
-      ibanNo: formData.ibanNo,
-      currency: formData.currency,
+      rank: banks.filter(b => b.type === bankData.type).length + 1,
+      name: bankData.bankName,
+      accountNo: bankData.accountNumber,
+      ibanNo: bankData.ibanNumber,
+      currency: bankData.currency,
       active: true,
       isDefault: false,
       isIntlDefault: false,
-      type: formData.type,
+      type: bankData.type,
+      address: bankData.bankAddress,
+      country: bankData.country,
     };
     setBanks([...banks, newBank]);
-    setAddDialogOpen(false);
-    setFormData({ name: '', accountNo: '', ibanNo: '', currency: '', type: 'domestic' });
   };
 
   const handleEditBank = () => {
@@ -222,6 +231,15 @@ const Banks = () => {
     return logoMap[bankName] || '🏦';
   };
 
+  const getCountryFlag = (countryCode?: string) => {
+    const flagMap: { [key: string]: string } = {
+      'ZA': '🇿🇦',
+      'UK': '🇬🇧',
+      'INTL': '🌐',
+    };
+    return flagMap[countryCode || 'ZA'] || '🌐';
+  };
+
   const BankTable = ({ banks: bankList, title, type }: { 
     banks: Bank[], 
     title: string, 
@@ -232,11 +250,7 @@ const Banks = () => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           {type === 'domestic' ? (
             <>
-              <img 
-                src="/api/placeholder/24/16" 
-                alt="South Africa" 
-                style={{ width: 24, height: 16, borderRadius: 2 }}
-              />
+              <Typography sx={{ fontSize: '1.2rem' }}>🇿🇦</Typography>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 {title}
               </Typography>
@@ -391,80 +405,11 @@ const Banks = () => {
       />
 
       {/* Add Bank Dialog */}
-      <Dialog open={addDialogOpen} onClose={() => setAddDialogOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          Add New Bank
-          <IconButton onClick={() => setAddDialogOpen(false)}>
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent>
-          <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Bank Name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Account Number"
-                value={formData.accountNo}
-                onChange={(e) => setFormData({ ...formData, accountNo: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="IBAN Number"
-                value={formData.ibanNo}
-                onChange={(e) => setFormData({ ...formData, ibanNo: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Currency</InputLabel>
-                <Select
-                  value={formData.currency}
-                  label="Currency"
-                  onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                >
-                  <MenuItem value="ZAR">ZAR</MenuItem>
-                  <MenuItem value="USD">USD</MenuItem>
-                  <MenuItem value="EUR">EUR</MenuItem>
-                  <MenuItem value="GBP">GBP</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Type</InputLabel>
-                <Select
-                  value={formData.type}
-                  label="Type"
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value as 'domestic' | 'international' })}
-                >
-                  <MenuItem value="domestic">Domestic</MenuItem>
-                  <MenuItem value="international">International</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions sx={{ p: 3 }}>
-          <Button onClick={() => setAddDialogOpen(false)}>Cancel</Button>
-          <Button 
-            variant="contained" 
-            onClick={handleAddBank}
-            disabled={!formData.name || !formData.accountNo || !formData.currency}
-          >
-            Add Bank
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <AddBankDialog
+        open={addDialogOpen}
+        onClose={() => setAddDialogOpen(false)}
+        onAdd={handleAddBank}
+      />
 
       {/* Edit Bank Dialog */}
       <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)} maxWidth="sm" fullWidth>
@@ -557,11 +502,16 @@ const Banks = () => {
                     </Avatar>
                     <Box>
                       <Typography variant="h6">{selectedBank.name}</Typography>
-                      <Chip 
-                        label={selectedBank.type === 'domestic' ? 'Domestic' : 'International'} 
-                        size="small" 
-                        color="primary" 
-                      />
+                      <Box sx={{ display: 'flex', gap: 1, mt: 0.5 }}>
+                        <Chip 
+                          label={selectedBank.type === 'domestic' ? 'Domestic' : 'International'} 
+                          size="small" 
+                          color="primary" 
+                        />
+                        <Typography sx={{ fontSize: '1rem' }}>
+                          {getCountryFlag(selectedBank.country)}
+                        </Typography>
+                      </Box>
                     </Box>
                   </Box>
                 </Grid>
@@ -585,6 +535,12 @@ const Banks = () => {
                     color={selectedBank.active ? 'success' : 'default'}
                   />
                 </Grid>
+                {selectedBank.address && (
+                  <Grid item xs={12}>
+                    <Typography variant="body2" color="text.secondary">Bank Address</Typography>
+                    <Typography variant="body1">{selectedBank.address}</Typography>
+                  </Grid>
+                )}
                 <Grid item xs={12} sm={6}>
                   <Typography variant="body2" color="text.secondary">Default Bank</Typography>
                   <Typography variant="body1">{selectedBank.isDefault ? 'Yes' : 'No'}</Typography>
