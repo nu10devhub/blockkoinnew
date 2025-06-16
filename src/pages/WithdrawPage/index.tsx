@@ -15,9 +15,8 @@ import {
 } from '@mui/material';
 import {
   ArrowLeft as ArrowLeftIcon,
-  ChevronDown as ChevronDownIcon,
-  ChevronUp as ChevronUpIcon,
 } from '@mui/icons-material';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import DataTable, { Column } from '../../components/Table/DataTable';
 
@@ -323,7 +322,7 @@ const WithdrawPage = () => {
                 </Typography>
               </Box>
               <IconButton size="small">
-                {batch.expanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                {batch.expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
               </IconButton>
             </Box>
 
@@ -410,7 +409,7 @@ const WithdrawPage = () => {
           size="small"
           sx={{ color: 'text.secondary' }}
         >
-          &lt;
+          <
         </Button>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           Page 1 of 22
@@ -420,7 +419,7 @@ const WithdrawPage = () => {
           size="small"
           sx={{ color: 'text.secondary' }}
         >
-          &gt;
+          >
         </Button>
       </Box>
     </Box>
