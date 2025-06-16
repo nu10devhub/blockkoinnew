@@ -409,7 +409,7 @@ const WithdrawPage = () => {
           size="small"
           sx={{ color: 'text.secondary' }}
         >
-          <
+          {'<'}
         </Button>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           Page 1 of 22
@@ -419,7 +419,7 @@ const WithdrawPage = () => {
           size="small"
           sx={{ color: 'text.secondary' }}
         >
-          >
+          {'>'}
         </Button>
       </Box>
     </Box>
