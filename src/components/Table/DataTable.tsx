@@ -26,11 +26,11 @@ export type Order = 'asc' | 'desc';
 
 export interface Column {
   id: string;
-  label: string;
+  label: string | JSX.Element;
   numeric?: boolean;
   width?: number;
   editable?: boolean;
-  format?: (value: any) => string | JSX.Element;
+  format?: (value: any, row: any) => string | JSX.Element;
 }
 
 interface DataTableProps {
@@ -185,7 +185,7 @@ const DataTable = ({
                       />
                     ) : (
                       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: column.numeric ? 'flex-end' : 'flex-start' }}>
-                        {column.format ? column.format(row[column.id]) : row[column.id]}
+                        {column.format ? column.format(row[column.id], row) : row[column.id]}
                         {column.editable && (
                           <Tooltip title={`Edit ${column.label}`}>
                             <IconButton
