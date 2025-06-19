@@ -337,16 +337,73 @@ const ProfilesPage = () => {
           }}
         >
           <TableContainer>
-            <Table>
+            <Table sx={{ tableLayout: 'fixed' }}>
               <TableHead>
                 <TableRow sx={{ backgroundColor: 'grey.50' }}>
-                  <TableCell sx={{ fontWeight: 600, py: 2 }}>Select</TableCell>
-                  <TableCell sx={{ fontWeight: 600, py: 2 }}>Client ID</TableCell>
-                  <TableCell sx={{ fontWeight: 600, py: 2 }}>Other Name</TableCell>
-                  <TableCell sx={{ fontWeight: 600, py: 2 }}>Surname</TableCell>
-                  <TableCell sx={{ fontWeight: 600, py: 2 }}>DOB</TableCell>
-                  <TableCell sx={{ fontWeight: 600, py: 2 }}>ID/Passport</TableCell>
-                  <TableCell sx={{ fontWeight: 600, py: 2 }}>Mobile</TableCell>
+                  <TableCell 
+                    sx={{ 
+                      fontWeight: 600, 
+                      py: 2,
+                      width: '80px',
+                      textAlign: 'center'
+                    }}
+                  >
+                    Select
+                  </TableCell>
+                  <TableCell 
+                    sx={{ 
+                      fontWeight: 600, 
+                      py: 2,
+                      width: '120px'
+                    }}
+                  >
+                    Client ID
+                  </TableCell>
+                  <TableCell 
+                    sx={{ 
+                      fontWeight: 600, 
+                      py: 2,
+                      width: '150px'
+                    }}
+                  >
+                    Other Name
+                  </TableCell>
+                  <TableCell 
+                    sx={{ 
+                      fontWeight: 600, 
+                      py: 2,
+                      width: '120px'
+                    }}
+                  >
+                    Surname
+                  </TableCell>
+                  <TableCell 
+                    sx={{ 
+                      fontWeight: 600, 
+                      py: 2,
+                      width: '120px'
+                    }}
+                  >
+                    DOB
+                  </TableCell>
+                  <TableCell 
+                    sx={{ 
+                      fontWeight: 600, 
+                      py: 2,
+                      width: '140px'
+                    }}
+                  >
+                    ID/Passport
+                  </TableCell>
+                  <TableCell 
+                    sx={{ 
+                      fontWeight: 600, 
+                      py: 2,
+                      width: '140px'
+                    }}
+                  >
+                    Mobile
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -356,7 +413,7 @@ const ProfilesPage = () => {
                 >
                   {searchResults.map((client) => (
                     <TableRow key={client.id} hover>
-                      <TableCell>
+                      <TableCell sx={{ textAlign: 'center', py: 1.5 }}>
                         <FormControlLabel
                           value={client.id}
                           control={<Radio size="small" />}
@@ -364,33 +421,69 @@ const ProfilesPage = () => {
                           sx={{ m: 0 }}
                         />
                       </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" color="text.secondary">
+                      <TableCell sx={{ py: 1.5 }}>
+                        <Typography 
+                          variant="body2" 
+                          sx={{ 
+                            color: 'text.secondary',
+                            fontSize: '0.875rem'
+                          }}
+                        >
                           {client.clientId}
                         </Typography>
                       </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" color="text.secondary">
+                      <TableCell sx={{ py: 1.5 }}>
+                        <Typography 
+                          variant="body2" 
+                          sx={{ 
+                            color: 'text.secondary',
+                            fontSize: '0.875rem'
+                          }}
+                        >
                           {client.otherName}
                         </Typography>
                       </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" color="text.secondary">
+                      <TableCell sx={{ py: 1.5 }}>
+                        <Typography 
+                          variant="body2" 
+                          sx={{ 
+                            color: 'text.secondary',
+                            fontSize: '0.875rem'
+                          }}
+                        >
                           {client.surname}
                         </Typography>
                       </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" color="text.secondary">
+                      <TableCell sx={{ py: 1.5 }}>
+                        <Typography 
+                          variant="body2" 
+                          sx={{ 
+                            color: 'text.secondary',
+                            fontSize: '0.875rem'
+                          }}
+                        >
                           {client.dob}
                         </Typography>
                       </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" color="text.secondary">
+                      <TableCell sx={{ py: 1.5 }}>
+                        <Typography 
+                          variant="body2" 
+                          sx={{ 
+                            color: 'text.secondary',
+                            fontSize: '0.875rem'
+                          }}
+                        >
                           {client.idPassport}
                         </Typography>
                       </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" color="text.secondary">
+                      <TableCell sx={{ py: 1.5 }}>
+                        <Typography 
+                          variant="body2" 
+                          sx={{ 
+                            color: 'text.secondary',
+                            fontSize: '0.875rem'
+                          }}
+                        >
                           {client.mobile}
                         </Typography>
                       </TableCell>
