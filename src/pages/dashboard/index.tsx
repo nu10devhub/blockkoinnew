@@ -195,171 +195,178 @@ const Dashboard = () => {
 
   return (
     <Box sx={{ p: 0 }}>
-      {/* Main Metrics Grid */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        {/* Top Row - Large Cards */}
-        <Grid item xs={12} md={6}>
-          <MetricCard
-            title="Total Company Funds Under Management"
-            value={metrics.totalFundsUnderManagement}
-            color={theme.palette.primary.main}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <MetricCard
-            title="Total Cash"
-            value={metrics.totalCash}
-            color={theme.palette.primary.main}
-          />
+      {/* Main Container with Left and Right Sections */}
+      <Grid container spacing={3}>
+        {/* Left Section - Main Metrics */}
+        <Grid item xs={12} lg={8}>
+          <Grid container spacing={3}>
+            {/* Top Row - Large Cards */}
+            <Grid item xs={12} md={6}>
+              <MetricCard
+                title="Total Company Funds Under Management"
+                value={metrics.totalFundsUnderManagement}
+                color={theme.palette.primary.main}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <MetricCard
+                title="Total Cash"
+                value={metrics.totalCash}
+                color={theme.palette.primary.main}
+              />
+            </Grid>
+
+            {/* Second Row */}
+            <Grid item xs={12} md={6}>
+              <MetricCard
+                title="Unmatched Funds"
+                value={metrics.unmatchedFunds}
+                color={theme.palette.primary.main}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <MetricCard
+                title="Pending Release"
+                value={metrics.pendingRelease}
+                color={theme.palette.primary.main}
+              />
+            </Grid>
+
+            {/* Third Row */}
+            <Grid item xs={12} md={6}>
+              <MetricCard
+                title="Amount due to TA"
+                value={metrics.amountDueToTA}
+                color={theme.palette.primary.main}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <MetricCard
+                title="Amount from to TA"
+                value={metrics.amountFromTA}
+                color={theme.palette.primary.main}
+              />
+            </Grid>
+
+            {/* Bottom Row - Smaller Cards */}
+            <Grid item xs={12} md={4}>
+              <MetricCard
+                title="Revenue"
+                value={metrics.revenue}
+                color={theme.palette.primary.main}
+                showTrend
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <MetricCard
+                title="New Client Accounts"
+                value={metrics.newClientAccounts}
+                isCurrency={false}
+                color={theme.palette.primary.main}
+                showTrend
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <MetricCard
+                title="1st Time Deposits"
+                value={metrics.firstTimeDeposits}
+                isCurrency={false}
+                color={theme.palette.primary.main}
+                showTrend
+              />
+            </Grid>
+          </Grid>
         </Grid>
 
-        {/* Second Row */}
-        <Grid item xs={12} md={6}>
-          <MetricCard
-            title="Unmatched Funds"
-            value={metrics.unmatchedFunds}
-            color={theme.palette.primary.main}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <MetricCard
-            title="Pending Release"
-            value={metrics.pendingRelease}
-            color={theme.palette.primary.main}
-          />
-        </Grid>
-
-        {/* Third Row */}
-        <Grid item xs={12} md={6}>
-          <MetricCard
-            title="Amount due to TA"
-            value={metrics.amountDueToTA}
-            color={theme.palette.primary.main}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <MetricCard
-            title="Amount from to TA"
-            value={metrics.amountFromTA}
-            color={theme.palette.primary.main}
-          />
-        </Grid>
-
-        {/* Bottom Row - Smaller Cards */}
-        <Grid item xs={12} md={4}>
-          <MetricCard
-            title="Revenue"
-            value={metrics.revenue}
-            color={theme.palette.primary.main}
-            showTrend
-          />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <MetricCard
-            title="New Client Accounts"
-            value={metrics.newClientAccounts}
-            isCurrency={false}
-            color={theme.palette.primary.main}
-            showTrend
-          />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <MetricCard
-            title="1st Time Deposits"
-            value={metrics.firstTimeDeposits}
-            isCurrency={false}
-            color={theme.palette.primary.main}
-            showTrend
-          />
-        </Grid>
-      </Grid>
-
-      {/* API Status Panel */}
-      <Paper
-        elevation={0}
-        sx={{
-          border: '1px solid',
-          borderColor: 'divider',
-          borderRadius: 3,
-          overflow: 'hidden',
-        }}
-      >
-        <Box
-          sx={{
-            p: 3,
-            backgroundColor: alpha(theme.palette.grey[50], 0.5),
-            borderBottom: '1px solid',
-            borderColor: 'divider',
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Typography
-              variant="h6"
+        {/* Right Section - API Status Panel */}
+        <Grid item xs={12} lg={4}>
+          <Paper
+            elevation={0}
+            sx={{
+              border: '1px solid',
+              borderColor: 'divider',
+              borderRadius: 3,
+              overflow: 'hidden',
+              height: 'fit-content',
+            }}
+          >
+            <Box
               sx={{
-                fontWeight: 600,
-                color: 'text.primary',
+                p: 3,
+                backgroundColor: alpha(theme.palette.grey[50], 0.5),
+                borderBottom: '1px solid',
+                borderColor: 'divider',
               }}
             >
-              All API & Webhooks
-            </Typography>
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: 600,
-                color: 'text.primary',
-                ml: 'auto',
-              }}
-            >
-              Status
-            </Typography>
-          </Box>
-        </Box>
-
-        <Box sx={{ p: 3 }}>
-          <Grid container spacing={2}>
-            {apiStatuses.map((api, index) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                <Box
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography
+                  variant="h6"
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    p: 2,
-                    borderRadius: 2,
-                    backgroundColor: alpha(getStatusColor(api.status), 0.05),
-                    border: '1px solid',
-                    borderColor: alpha(getStatusColor(api.status), 0.2),
-                    transition: 'all 0.2s ease',
-                    '&:hover': {
-                      backgroundColor: alpha(getStatusColor(api.status), 0.1),
-                      borderColor: getStatusColor(api.status),
-                    },
+                    fontWeight: 600,
+                    color: 'text.primary',
                   }}
                 >
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: 500,
-                      color: 'text.primary',
-                    }}
-                  >
-                    {api.name}
-                  </Typography>
-                  <Box
-                    sx={{
-                      width: 12,
-                      height: 12,
-                      borderRadius: '50%',
-                      backgroundColor: getStatusColor(api.status),
-                      boxShadow: `0 0 0 2px ${alpha(getStatusColor(api.status), 0.2)}`,
-                    }}
-                  />
-                </Box>
+                  All API & Webhooks
+                </Typography>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 600,
+                    color: 'text.primary',
+                  }}
+                >
+                  Status
+                </Typography>
+              </Box>
+            </Box>
+
+            <Box sx={{ p: 3 }}>
+              <Grid container spacing={2}>
+                {apiStatuses.map((api, index) => (
+                  <Grid item xs={12} key={index}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        p: 2,
+                        borderRadius: 2,
+                        backgroundColor: alpha(getStatusColor(api.status), 0.05),
+                        border: '1px solid',
+                        borderColor: alpha(getStatusColor(api.status), 0.2),
+                        transition: 'all 0.2s ease',
+                        '&:hover': {
+                          backgroundColor: alpha(getStatusColor(api.status), 0.1),
+                          borderColor: getStatusColor(api.status),
+                        },
+                      }}
+                    >
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
+                          color: 'text.primary',
+                        }}
+                      >
+                        {api.name}
+                      </Typography>
+                      <Box
+                        sx={{
+                          width: 12,
+                          height: 12,
+                          borderRadius: '50%',
+                          backgroundColor: getStatusColor(api.status),
+                          boxShadow: `0 0 0 2px ${alpha(getStatusColor(api.status), 0.2)}`,
+                        }}
+                      />
+                    </Box>
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
-        </Box>
-      </Paper>
+            </Box>
+          </Paper>
+        </Grid>
+      </Grid>
 
       {/* Loading Overlay */}
       {loading && (
