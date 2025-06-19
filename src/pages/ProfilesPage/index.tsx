@@ -336,16 +336,23 @@ const ProfilesPage = () => {
             overflow: 'hidden',
           }}
         >
-          <TableContainer>
-            <Table sx={{ tableLayout: 'fixed' }}>
+          <TableContainer sx={{ overflowX: 'auto' }}>
+            <Table 
+              sx={{ 
+                minWidth: 800,
+                tableLayout: 'fixed',
+                width: '100%'
+              }}
+            >
               <TableHead>
                 <TableRow sx={{ backgroundColor: 'grey.50' }}>
                   <TableCell 
                     sx={{ 
                       fontWeight: 600, 
                       py: 2,
-                      width: '80px',
-                      textAlign: 'center'
+                      width: '60px',
+                      textAlign: 'center',
+                      fontSize: '0.875rem'
                     }}
                   >
                     Select
@@ -354,7 +361,8 @@ const ProfilesPage = () => {
                     sx={{ 
                       fontWeight: 600, 
                       py: 2,
-                      width: '120px'
+                      width: '100px',
+                      fontSize: '0.875rem'
                     }}
                   >
                     Client ID
@@ -363,7 +371,8 @@ const ProfilesPage = () => {
                     sx={{ 
                       fontWeight: 600, 
                       py: 2,
-                      width: '150px'
+                      width: '140px',
+                      fontSize: '0.875rem'
                     }}
                   >
                     Other Name
@@ -372,7 +381,8 @@ const ProfilesPage = () => {
                     sx={{ 
                       fontWeight: 600, 
                       py: 2,
-                      width: '120px'
+                      width: '100px',
+                      fontSize: '0.875rem'
                     }}
                   >
                     Surname
@@ -381,7 +391,8 @@ const ProfilesPage = () => {
                     sx={{ 
                       fontWeight: 600, 
                       py: 2,
-                      width: '120px'
+                      width: '110px',
+                      fontSize: '0.875rem'
                     }}
                   >
                     DOB
@@ -390,7 +401,8 @@ const ProfilesPage = () => {
                     sx={{ 
                       fontWeight: 600, 
                       py: 2,
-                      width: '140px'
+                      width: '130px',
+                      fontSize: '0.875rem'
                     }}
                   >
                     ID/Passport
@@ -399,7 +411,8 @@ const ProfilesPage = () => {
                     sx={{ 
                       fontWeight: 600, 
                       py: 2,
-                      width: '140px'
+                      width: '140px',
+                      fontSize: '0.875rem'
                     }}
                   >
                     Mobile
@@ -413,7 +426,13 @@ const ProfilesPage = () => {
                 >
                   {searchResults.map((client) => (
                     <TableRow key={client.id} hover>
-                      <TableCell sx={{ textAlign: 'center', py: 1.5 }}>
+                      <TableCell 
+                        sx={{ 
+                          textAlign: 'center', 
+                          py: 1.5,
+                          width: '60px'
+                        }}
+                      >
                         <FormControlLabel
                           value={client.id}
                           control={<Radio size="small" />}
@@ -421,67 +440,115 @@ const ProfilesPage = () => {
                           sx={{ m: 0 }}
                         />
                       </TableCell>
-                      <TableCell sx={{ py: 1.5 }}>
+                      <TableCell 
+                        sx={{ 
+                          py: 1.5,
+                          width: '100px'
+                        }}
+                      >
                         <Typography 
                           variant="body2" 
                           sx={{ 
                             color: 'text.secondary',
-                            fontSize: '0.875rem'
+                            fontSize: '0.875rem',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap'
                           }}
                         >
                           {client.clientId}
                         </Typography>
                       </TableCell>
-                      <TableCell sx={{ py: 1.5 }}>
+                      <TableCell 
+                        sx={{ 
+                          py: 1.5,
+                          width: '140px'
+                        }}
+                      >
                         <Typography 
                           variant="body2" 
                           sx={{ 
                             color: 'text.secondary',
-                            fontSize: '0.875rem'
+                            fontSize: '0.875rem',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap'
                           }}
                         >
                           {client.otherName}
                         </Typography>
                       </TableCell>
-                      <TableCell sx={{ py: 1.5 }}>
+                      <TableCell 
+                        sx={{ 
+                          py: 1.5,
+                          width: '100px'
+                        }}
+                      >
                         <Typography 
                           variant="body2" 
                           sx={{ 
                             color: 'text.secondary',
-                            fontSize: '0.875rem'
+                            fontSize: '0.875rem',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap'
                           }}
                         >
                           {client.surname}
                         </Typography>
                       </TableCell>
-                      <TableCell sx={{ py: 1.5 }}>
+                      <TableCell 
+                        sx={{ 
+                          py: 1.5,
+                          width: '110px'
+                        }}
+                      >
                         <Typography 
                           variant="body2" 
                           sx={{ 
                             color: 'text.secondary',
-                            fontSize: '0.875rem'
+                            fontSize: '0.875rem',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap'
                           }}
                         >
                           {client.dob}
                         </Typography>
                       </TableCell>
-                      <TableCell sx={{ py: 1.5 }}>
+                      <TableCell 
+                        sx={{ 
+                          py: 1.5,
+                          width: '130px'
+                        }}
+                      >
                         <Typography 
                           variant="body2" 
                           sx={{ 
                             color: 'text.secondary',
-                            fontSize: '0.875rem'
+                            fontSize: '0.875rem',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap'
                           }}
                         >
                           {client.idPassport}
                         </Typography>
                       </TableCell>
-                      <TableCell sx={{ py: 1.5 }}>
+                      <TableCell 
+                        sx={{ 
+                          py: 1.5,
+                          width: '140px'
+                        }}
+                      >
                         <Typography 
                           variant="body2" 
                           sx={{ 
                             color: 'text.secondary',
-                            fontSize: '0.875rem'
+                            fontSize: '0.875rem',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap'
                           }}
                         >
                           {client.mobile}
