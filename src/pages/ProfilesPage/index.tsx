@@ -16,7 +16,6 @@ import {
   Radio,
   RadioGroup,
   FormControlLabel,
-  IconButton,
 } from '@mui/material';
 import { ArrowLeft as ArrowLeftIcon } from '@mui/icons-material';
 

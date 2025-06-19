@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -14,7 +14,6 @@ import {
   TableHead,
   TableRow,
   Chip,
-  TablePagination,
 } from '@mui/material';
 import { ArrowLeft as ArrowLeftIcon } from '@mui/icons-material';
 
@@ -174,7 +173,6 @@ const allTransactions: Transaction[] = [
 
 const TransactionHistory = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { username } = useParams();
   
   const [filters, setFilters] = useState({
@@ -185,8 +183,6 @@ const TransactionHistory = () => {
     reference: '',
   });
   
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [filteredTransactions, setFilteredTransactions] = useState(allTransactions);
 
   const handleFilterChange = (field: string, value: string) => {
@@ -208,7 +204,6 @@ const TransactionHistory = () => {
     // Add more filter logic as needed
 
     setFilteredTransactions(filtered);
-    setPage(0);
   };
 
   const handleClearFilters = () => {
@@ -220,16 +215,6 @@ const TransactionHistory = () => {
       reference: '',
     });
     setFilteredTransactions(allTransactions);
-    setPage(0);
-  };
-
-  const handleChangePage = (_: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
   };
 
   const getStatusColor = (status: string) => {
@@ -246,11 +231,6 @@ const TransactionHistory = () => {
         return { backgroundColor: '#F5F5F5', color: '#757575' };
     }
   };
-
-  const paginatedTransactions = filteredTransactions.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
 
   return (
     <Box>
@@ -470,7 +450,7 @@ const TransactionHistory = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {paginatedTransactions.map((transaction) => (
+              {filteredTransactions.map((transaction) => (
                 <TableRow key={transaction.id} hover>
                   <TableCell>{transaction.date}</TableCell>
                   <TableCell>{transaction.type}</TableCell>

@@ -14,7 +14,6 @@ import {
   TableHead,
   TableRow,
   Chip,
-  TablePagination,
 } from '@mui/material';
 import { ArrowLeft as ArrowLeftIcon } from '@mui/icons-material';
 
@@ -29,7 +28,7 @@ interface Transaction {
   reason: string;
 }
 
-const allTransactions: Transaction[] = [
+const recentTransactions: Transaction[] = [
   {
     id: '1',
     date: '15/12/2024',
@@ -80,156 +79,57 @@ const allTransactions: Transaction[] = [
     status: 'Processing',
     reason: 'XXXXX',
   },
-  {
-    id: '6',
-    date: '10/12/2024',
-    type: 'Deposit',
-    source: 'FNB',
-    reference: 'Assigned Ref',
-    amount: '1500.00',
-    status: 'Approved',
-    reason: 'XXXXX',
-  },
-  {
-    id: '7',
-    date: '09/12/2024',
-    type: 'Trade',
-    source: 'BK',
-    reference: 'BK Ref',
-    amount: '4200.00',
-    status: 'Approved',
-    reason: 'XXXXX',
-  },
-  {
-    id: '8',
-    date: '08/12/2024',
-    type: 'Cash-Out',
-    source: 'BK',
-    reference: 'BK Ref',
-    amount: '900.00',
-    status: 'Processing',
-    reason: 'XXXXX',
-  },
-  {
-    id: '9',
-    date: '07/12/2024',
-    type: 'Cash-Out',
-    source: 'BK',
-    reference: 'BK Ref',
-    amount: '2100.00',
-    status: 'Processing',
-    reason: 'XXXXX',
-  },
-  {
-    id: '10',
-    date: '06/12/2024',
-    type: 'Withdrawal',
-    source: 'BK',
-    reference: 'BK Ref',
-    amount: '1800.00',
-    status: 'Rejected',
-    reason: 'XXXXX',
-  },
-  {
-    id: '11',
-    date: '05/12/2024',
-    type: 'Withdrawal',
-    source: 'BK',
-    reference: 'BK Ref',
-    amount: '3500.00',
-    status: 'Rejected',
-    reason: 'XXXXX',
-  },
-  {
-    id: '12',
-    date: '04/12/2024',
-    type: 'Deposit',
-    source: 'FNB',
-    reference: 'Assigned Ref',
-    amount: '6000.00',
-    status: 'Pending',
-    reason: 'XXXXX',
-  },
-  {
-    id: '13',
-    date: '03/12/2024',
-    type: 'Trade',
-    source: 'BK',
-    reference: 'BK Ref',
-    amount: '2800.00',
-    status: 'Approved',
-    reason: 'XXXXX',
-  },
-  {
-    id: '14',
-    date: '02/12/2024',
-    type: 'Cash-Out',
-    source: 'BK',
-    reference: 'BK Ref',
-    amount: '1100.00',
-    status: 'Processing',
-    reason: 'XXXXX',
-  },
 ];
 
-const TransactionHistory = () => {
+const ClientProfile = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { username } = useParams();
   
-  const [filters, setFilters] = useState({
-    status: '',
-    dateFrom: '',
-    dateTo: '',
-    currency: '',
-    reference: '',
-  });
-  
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [filteredTransactions, setFilteredTransactions] = useState(allTransactions);
+  // Get client data from location state or use default
+  const client = location.state?.client || {
+    clientId: username,
+    otherName: 'John Michael',
+    surname: 'Smith',
+    dob: '15/03/1990',
+    idPassport: 'ID123456789',
+    mobile: '+27123456789',
+  };
 
-  const handleFilterChange = (field: string, value: string) => {
-    setFilters(prev => ({
+  const [profileData, setProfileData] = useState({
+    name: client.otherName || 'Text Field',
+    otherNames: 'Text Field',
+    mobile: client.mobile || 'XXXXXXXXXX',
+    profileStatus: 'Text Field',
+    activeSince: 'Text Field',
+    agent: 'XXXXXXXXXX',
+    idType: 'Text Field',
+    addressType: 'Text Field',
+    employmentStatus: 'XXXXXXXXXX',
+    street: 'Street',
+    suburb: 'Suburb',
+    city: 'City',
+    postCode: 'Post code',
+    province: 'Province',
+    country: 'Country',
+    userRole: 'Text Field',
+  });
+
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleEdit = () => {
+    setIsEditing(!isEditing);
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setProfileData(prev => ({
       ...prev,
       [field]: value
     }));
   };
 
-  const handleSearch = () => {
-    let filtered = allTransactions;
-
-    if (filters.status) {
-      filtered = filtered.filter(t => t.status.toLowerCase().includes(filters.status.toLowerCase()));
-    }
-    if (filters.reference) {
-      filtered = filtered.filter(t => t.reference.toLowerCase().includes(filters.reference.toLowerCase()));
-    }
-    // Add more filter logic as needed
-
-    setFilteredTransactions(filtered);
-    setPage(0);
-  };
-
-  const handleClearFilters = () => {
-    setFilters({
-      status: '',
-      dateFrom: '',
-      dateTo: '',
-      currency: '',
-      reference: '',
-    });
-    setFilteredTransactions(allTransactions);
-    setPage(0);
-  };
-
-  const handleChangePage = (_: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+  const handleViewAll = () => {
+    navigate(`/profiles/${username}/transactionhistory`);
   };
 
   const getStatusColor = (status: string) => {
@@ -247,18 +147,13 @@ const TransactionHistory = () => {
     }
   };
 
-  const paginatedTransactions = filteredTransactions.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
-
   return (
     <Box>
       {/* Header */}
       <Box sx={{ mb: 3 }}>
         <Button
           startIcon={<ArrowLeftIcon />}
-          onClick={() => navigate(`/profiles/${username}`)}
+          onClick={() => navigate('/profiles')}
           sx={{
             color: 'text.primary',
             textTransform: 'none',
@@ -273,7 +168,7 @@ const TransactionHistory = () => {
         </Button>
       </Box>
 
-      {/* Search Filters */}
+      {/* Client Profile Form */}
       <Paper
         elevation={0}
         sx={{
@@ -284,20 +179,50 @@ const TransactionHistory = () => {
           borderRadius: 2,
         }}
       >
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={6} md={2}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 600,
+              color: 'primary.main',
+            }}
+          >
+            Client Profile
+          </Typography>
+          <Button
+            variant="outlined"
+            onClick={handleEdit}
+            sx={{
+              borderColor: 'primary.main',
+              color: 'primary.main',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: 3,
+              '&:hover': {
+                borderColor: 'primary.dark',
+                backgroundColor: 'primary.light',
+              },
+            }}
+          >
+            {isEditing ? 'Save' : 'Edit'}
+          </Button>
+        </Box>
+
+        <Grid container spacing={3}>
+          {/* Row 1 */}
+          <Grid item xs={12} sm={6} md={3}>
             <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-              Status
+              Name
             </Typography>
             <TextField
               fullWidth
-              placeholder="Text Field"
+              value={profileData.name}
+              onChange={(e) => handleInputChange('name', e.target.value)}
+              disabled={!isEditing}
               size="small"
-              value={filters.status}
-              onChange={(e) => handleFilterChange('status', e.target.value)}
               sx={{
                 '& .MuiOutlinedInput-root': {
-                  backgroundColor: 'grey.100',
+                  backgroundColor: isEditing ? 'white' : 'grey.100',
                   '& fieldset': { border: 'none' },
                   '&:hover fieldset': { border: 'none' },
                   '&.Mui-focused fieldset': {
@@ -309,64 +234,349 @@ const TransactionHistory = () => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={2}>
+          <Grid item xs={12} sm={6} md={3}>
             <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-              Date Range
+              Other Names
             </Typography>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <TextField
-                placeholder="From"
-                size="small"
-                value={filters.dateFrom}
-                onChange={(e) => handleFilterChange('dateFrom', e.target.value)}
-                sx={{
-                  flex: 1,
-                  '& .MuiOutlinedInput-root': {
-                    backgroundColor: 'grey.100',
-                    '& fieldset': { border: 'none' },
-                    '&:hover fieldset': { border: 'none' },
-                    '&.Mui-focused fieldset': {
-                      border: '2px solid',
-                      borderColor: 'primary.main',
+            <TextField
+              fullWidth
+              value={profileData.otherNames}
+              onChange={(e) => handleInputChange('otherNames', e.target.value)}
+              disabled={!isEditing}
+              size="small"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: isEditing ? 'white' : 'grey.100',
+                  '& fieldset': { border: 'none' },
+                  '&:hover fieldset': { border: 'none' },
+                  '&.Mui-focused fieldset': {
+                    border: '2px solid',
+                    borderColor: 'primary.main',
+                  },
+                },
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+              Mobile
+            </Typography>
+            <TextField
+              fullWidth
+              value={profileData.mobile}
+              onChange={(e) => handleInputChange('mobile', e.target.value)}
+              disabled={!isEditing}
+              size="small"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: isEditing ? 'white' : 'grey.100',
+                  '& fieldset': { border: 'none' },
+                  '&:hover fieldset': { border: 'none' },
+                  '&.Mui-focused fieldset': {
+                    border: '2px solid',
+                    borderColor: 'primary.main',
+                  },
+                },
+              }}
+            />
+          </Grid>
+
+          {/* Row 2 */}
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+              Profile Status
+            </Typography>
+            <TextField
+              fullWidth
+              value={profileData.profileStatus}
+              onChange={(e) => handleInputChange('profileStatus', e.target.value)}
+              disabled={!isEditing}
+              size="small"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: isEditing ? 'white' : 'grey.100',
+                  '& fieldset': { border: 'none' },
+                  '&:hover fieldset': { border: 'none' },
+                  '&.Mui-focused fieldset': {
+                    border: '2px solid',
+                    borderColor: 'primary.main',
+                  },
+                },
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+              Active Since
+            </Typography>
+            <TextField
+              fullWidth
+              value={profileData.activeSince}
+              onChange={(e) => handleInputChange('activeSince', e.target.value)}
+              disabled={!isEditing}
+              size="small"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: isEditing ? 'white' : 'grey.100',
+                  '& fieldset': { border: 'none' },
+                  '&:hover fieldset': { border: 'none' },
+                  '&.Mui-focused fieldset': {
+                    border: '2px solid',
+                    borderColor: 'primary.main',
+                  },
+                },
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+              Agent
+            </Typography>
+            <TextField
+              fullWidth
+              value={profileData.agent}
+              onChange={(e) => handleInputChange('agent', e.target.value)}
+              disabled={!isEditing}
+              size="small"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: isEditing ? 'white' : 'grey.100',
+                  '& fieldset': { border: 'none' },
+                  '&:hover fieldset': { border: 'none' },
+                  '&.Mui-focused fieldset': {
+                    border: '2px solid',
+                    borderColor: 'primary.main',
+                  },
+                },
+              }}
+            />
+          </Grid>
+
+          {/* Row 3 */}
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+              ID Type
+            </Typography>
+            <TextField
+              fullWidth
+              value={profileData.idType}
+              onChange={(e) => handleInputChange('idType', e.target.value)}
+              disabled={!isEditing}
+              size="small"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: isEditing ? 'white' : 'grey.100',
+                  '& fieldset': { border: 'none' },
+                  '&:hover fieldset': { border: 'none' },
+                  '&.Mui-focused fieldset': {
+                    border: '2px solid',
+                    borderColor: 'primary.main',
+                  },
+                },
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+              Address Type
+            </Typography>
+            <TextField
+              fullWidth
+              value={profileData.addressType}
+              onChange={(e) => handleInputChange('addressType', e.target.value)}
+              disabled={!isEditing}
+              size="small"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: isEditing ? 'white' : 'grey.100',
+                  '& fieldset': { border: 'none' },
+                  '&:hover fieldset': { border: 'none' },
+                  '&.Mui-focused fieldset': {
+                    border: '2px solid',
+                    borderColor: 'primary.main',
+                  },
+                },
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+              Employment Status
+            </Typography>
+            <TextField
+              fullWidth
+              value={profileData.employmentStatus}
+              onChange={(e) => handleInputChange('employmentStatus', e.target.value)}
+              disabled={!isEditing}
+              size="small"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: isEditing ? 'white' : 'grey.100',
+                  '& fieldset': { border: 'none' },
+                  '&:hover fieldset': { border: 'none' },
+                  '&.Mui-focused fieldset': {
+                    border: '2px solid',
+                    borderColor: 'primary.main',
+                  },
+                },
+              }}
+            />
+          </Grid>
+
+          {/* Address Row */}
+          <Grid item xs={12}>
+            <Typography variant="body2" sx={{ mb: 2, fontWeight: 500 }}>
+              Address
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6} md={2}>
+                <TextField
+                  fullWidth
+                  placeholder="Street"
+                  value={profileData.street}
+                  onChange={(e) => handleInputChange('street', e.target.value)}
+                  disabled={!isEditing}
+                  size="small"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: isEditing ? 'white' : 'grey.100',
+                      '& fieldset': { border: 'none' },
+                      '&:hover fieldset': { border: 'none' },
+                      '&.Mui-focused fieldset': {
+                        border: '2px solid',
+                        borderColor: 'primary.main',
+                      },
                     },
-                  },
-                }}
-              />
-              <Typography sx={{ alignSelf: 'center', mx: 1 }}>To</Typography>
-              <TextField
-                placeholder="To"
-                size="small"
-                value={filters.dateTo}
-                onChange={(e) => handleFilterChange('dateTo', e.target.value)}
-                sx={{
-                  flex: 1,
-                  '& .MuiOutlinedInput-root': {
-                    backgroundColor: 'grey.100',
-                    '& fieldset': { border: 'none' },
-                    '&:hover fieldset': { border: 'none' },
-                    '&.Mui-focused fieldset': {
-                      border: '2px solid',
-                      borderColor: 'primary.main',
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={2}>
+                <TextField
+                  fullWidth
+                  placeholder="Suburb"
+                  value={profileData.suburb}
+                  onChange={(e) => handleInputChange('suburb', e.target.value)}
+                  disabled={!isEditing}
+                  size="small"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: isEditing ? 'white' : 'grey.100',
+                      '& fieldset': { border: 'none' },
+                      '&:hover fieldset': { border: 'none' },
+                      '&.Mui-focused fieldset': {
+                        border: '2px solid',
+                        borderColor: 'primary.main',
+                      },
                     },
-                  },
-                }}
-              />
-            </Box>
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={2}>
+                <TextField
+                  fullWidth
+                  placeholder="City"
+                  value={profileData.city}
+                  onChange={(e) => handleInputChange('city', e.target.value)}
+                  disabled={!isEditing}
+                  size="small"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: isEditing ? 'white' : 'grey.100',
+                      '& fieldset': { border: 'none' },
+                      '&:hover fieldset': { border: 'none' },
+                      '&.Mui-focused fieldset': {
+                        border: '2px solid',
+                        borderColor: 'primary.main',
+                      },
+                    },
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={2}>
+                <TextField
+                  fullWidth
+                  placeholder="Post code"
+                  value={profileData.postCode}
+                  onChange={(e) => handleInputChange('postCode', e.target.value)}
+                  disabled={!isEditing}
+                  size="small"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: isEditing ? 'white' : 'grey.100',
+                      '& fieldset': { border: 'none' },
+                      '&:hover fieldset': { border: 'none' },
+                      '&.Mui-focused fieldset': {
+                        border: '2px solid',
+                        borderColor: 'primary.main',
+                      },
+                    },
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={2}>
+                <TextField
+                  fullWidth
+                  placeholder="Province"
+                  value={profileData.province}
+                  onChange={(e) => handleInputChange('province', e.target.value)}
+                  disabled={!isEditing}
+                  size="small"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: isEditing ? 'white' : 'grey.100',
+                      '& fieldset': { border: 'none' },
+                      '&:hover fieldset': { border: 'none' },
+                      '&.Mui-focused fieldset': {
+                        border: '2px solid',
+                        borderColor: 'primary.main',
+                      },
+                    },
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={2}>
+                <TextField
+                  fullWidth
+                  placeholder="Country"
+                  value={profileData.country}
+                  onChange={(e) => handleInputChange('country', e.target.value)}
+                  disabled={!isEditing}
+                  size="small"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: isEditing ? 'white' : 'grey.100',
+                      '& fieldset': { border: 'none' },
+                      '&:hover fieldset': { border: 'none' },
+                      '&.Mui-focused fieldset': {
+                        border: '2px solid',
+                        borderColor: 'primary.main',
+                      },
+                    },
+                  }}
+                />
+              </Grid>
+            </Grid>
           </Grid>
 
-          <Grid item xs={12} sm={6} md={2}>
+          {/* User Role */}
+          <Grid item xs={12} sm={6} md={3}>
             <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-              Currency
+              User Role
             </Typography>
             <TextField
               fullWidth
-              placeholder="XXXXXX"
+              value={profileData.userRole}
+              onChange={(e) => handleInputChange('userRole', e.target.value)}
+              disabled={!isEditing}
               size="small"
-              value={filters.currency}
-              onChange={(e) => handleFilterChange('currency', e.target.value)}
               sx={{
                 '& .MuiOutlinedInput-root': {
-                  backgroundColor: 'grey.100',
+                  backgroundColor: isEditing ? 'white' : 'grey.100',
                   '& fieldset': { border: 'none' },
                   '&:hover fieldset': { border: 'none' },
                   '&.Mui-focused fieldset': {
@@ -376,65 +586,11 @@ const TransactionHistory = () => {
                 },
               }}
             />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={2}>
-            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-              Reference
-            </Typography>
-            <TextField
-              fullWidth
-              placeholder="XXXXXXXX"
-              size="small"
-              value={filters.reference}
-              onChange={(e) => handleFilterChange('reference', e.target.value)}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  backgroundColor: 'grey.100',
-                  '& fieldset': { border: 'none' },
-                  '&:hover fieldset': { border: 'none' },
-                  '&.Mui-focused fieldset': {
-                    border: '2px solid',
-                    borderColor: 'primary.main',
-                  },
-                },
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={2}>
-            <Box sx={{ mt: 3, display: 'flex', gap: 1 }}>
-              <Button
-                variant="outlined"
-                onClick={handleClearFilters}
-                sx={{
-                  borderColor: 'grey.400',
-                  color: 'grey.600',
-                  textTransform: 'none',
-                  fontWeight: 500,
-                  flex: 1,
-                }}
-              >
-                Clear
-              </Button>
-              <Button
-                variant="contained"
-                onClick={handleSearch}
-                sx={{
-                  backgroundColor: 'primary.main',
-                  textTransform: 'none',
-                  fontWeight: 500,
-                  flex: 1,
-                }}
-              >
-                Search
-              </Button>
-            </Box>
           </Grid>
         </Grid>
       </Paper>
 
-      {/* Transaction History Table */}
+      {/* Transaction History Section */}
       <Paper
         elevation={0}
         sx={{
@@ -444,7 +600,7 @@ const TransactionHistory = () => {
           overflow: 'hidden',
         }}
       >
-        <Box sx={{ p: 3, pb: 2 }}>
+        <Box sx={{ p: 3, pb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography
             variant="h6"
             sx={{
@@ -454,6 +610,20 @@ const TransactionHistory = () => {
           >
             Transaction History
           </Typography>
+          <Button
+            variant="text"
+            onClick={handleViewAll}
+            sx={{
+              color: 'primary.main',
+              textTransform: 'none',
+              fontWeight: 500,
+              '&:hover': {
+                backgroundColor: 'primary.light',
+              },
+            }}
+          >
+            View All
+          </Button>
         </Box>
 
         <TableContainer>
@@ -470,7 +640,7 @@ const TransactionHistory = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {paginatedTransactions.map((transaction) => (
+              {recentTransactions.map((transaction) => (
                 <TableRow key={transaction.id} hover>
                   <TableCell>{transaction.date}</TableCell>
                   <TableCell>{transaction.type}</TableCell>
@@ -494,16 +664,9 @@ const TransactionHistory = () => {
             </TableBody>
           </Table>
         </TableContainer>
-
-        {/* Pagination */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', p: 2 }}>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            {'< Page 1 of 22 >'}
-          </Typography>
-        </Box>
       </Paper>
     </Box>
   );
 };
 
-export default TransactionHistory;
+export default ClientProfile;
