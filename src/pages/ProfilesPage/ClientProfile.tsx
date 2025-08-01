@@ -16,6 +16,7 @@ import {
   Chip,
 } from '@mui/material';
 import { ArrowLeft as ArrowLeftIcon } from '@mui/icons-material';
+import TradingDialog from '../../components/Dialogs/TradingDialog';
 
 interface Transaction {
   id: string;
@@ -116,6 +117,7 @@ const ClientProfile = () => {
   });
 
   const [isEditing, setIsEditing] = useState(false);
+  const [tradingDialogOpen, setTradingDialogOpen] = useState(false);
 
   const handleEdit = () => {
     setIsEditing(!isEditing);
@@ -130,6 +132,20 @@ const ClientProfile = () => {
 
   const handleViewAll = () => {
     navigate(`/profiles/${username}/transactionhistory`);
+  };
+
+  const handleTrade = () => {
+    setTradingDialogOpen(true);
+  };
+
+  const handleMoneySend = () => {
+    console.log('Money Send clicked');
+    // Implement money send functionality
+  };
+
+  const handleTradeSubmit = (tradeData: any) => {
+    console.log('Trade submitted:', tradeData);
+    // Implement trade submission logic
   };
 
   const getStatusColor = (status: string) => {
@@ -150,7 +166,7 @@ const ClientProfile = () => {
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ mb: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Button
           startIcon={<ArrowLeftIcon />}
           onClick={() => navigate('/profiles')}
@@ -166,6 +182,42 @@ const ClientProfile = () => {
         >
           Back to Profiles
         </Button>
+        
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="contained"
+            onClick={handleTrade}
+            sx={{
+              backgroundColor: 'primary.main',
+              color: 'white',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: 3,
+              '&:hover': {
+                backgroundColor: 'primary.dark',
+              },
+            }}
+          >
+            Trade
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={handleMoneySend}
+            sx={{
+              borderColor: 'primary.main',
+              color: 'primary.main',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: 3,
+              '&:hover': {
+                borderColor: 'primary.dark',
+                backgroundColor: 'primary.light',
+              },
+            }}
+          >
+            Money Send
+          </Button>
+        </Box>
       </Box>
 
       {/* Client Profile Form */}
@@ -665,6 +717,14 @@ const ClientProfile = () => {
           </Table>
         </TableContainer>
       </Paper>
+
+      {/* Trading Dialog */}
+      <TradingDialog
+        open={tradingDialogOpen}
+        onClose={() => setTradingDialogOpen(false)}
+        client={client}
+        onSubmit={handleTradeSubmit}
+      />
     </Box>
   );
 };
