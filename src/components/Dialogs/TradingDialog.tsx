@@ -55,12 +55,13 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
   const [guaranteedRate, setGuaranteedRate] = useState('0');
   const [totalAmountConvert, setTotalAmountConvert] = useState('0');
   const [addCashHandling, setAddCashHandling] = useState(false);
-  const [isLinkedDeal, setIsLinkedDeal] = useState('Yes');
+  const [brokerFee, setBrokerFee] = useState('1');
+  const [timeToHoldFunds, setTimeToHoldFunds] = useState('1');
+  const [expirationTime, setExpirationTime] = useState<Date | null>(null);
   
   const [formData, setFormData] = useState({
     broker: '',
     service: 'OTC',
-    dueDate: '',
     dueTime: 'OTC',
     email: '',
     cellphoneNumber: client.mobile || '',
@@ -81,11 +82,11 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
   useEffect(() => {
     if (enterAmount) {
       const amount = parseFloat(enterAmount) || 0;
-      const brokerFee = 2.5; // 2.5%
+      const brokerFeePercent = parseFloat(brokerFee) || 1;
       const bkFee = 2.5; // 2.5%
       const cashHandlingFee = addCashHandling ? 2.5 : 0; // 2.5% if checked
       
-      const totalFeePercentage = brokerFee + bkFee + cashHandlingFee;
+      const totalFeePercentage = brokerFeePercent + bkFee + cashHandlingFee;
       const totalFeeAmount = (amount * totalFeePercentage) / 100;
       const convertAmount = amount - totalFeeAmount;
       
@@ -93,7 +94,15 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
     } else {
       setTotalAmountConvert('0');
     }
-  }, [enterAmount, addCashHandling]);
+  }, [enterAmount, addCashHandling, brokerFee]);
+
+  // Calculate expiration time based on time to hold funds
+  useEffect(() => {
+    const days = parseInt(timeToHoldFunds) || 1;
+    const expiration = new Date();
+    expiration.setDate(expiration.getDate() + days);
+    setExpirationTime(expiration);
+  }, [timeToHoldFunds]);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({
@@ -111,8 +120,11 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
       guaranteedRate,
       totalAmountConvert,
       addCashHandling,
-      isLinkedDeal,
+      brokerFee,
+      timeToHoldFunds,
+      expirationTime,
       ...formData,
+      dueDate: expirationTime?.toISOString().split('T')[0] || '',
       clientData: client,
     };
     
@@ -127,11 +139,12 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
     setGuaranteedRate('0');
     setTotalAmountConvert('0');
     setAddCashHandling(false);
-    setIsLinkedDeal('Yes');
+    setBrokerFee('1');
+    setTimeToHoldFunds('1');
+    setExpirationTime(null);
     setFormData({
       broker: '',
       service: 'OTC',
-      dueDate: '',
       dueTime: 'OTC',
       email: '',
       cellphoneNumber: client.mobile || '',
@@ -196,15 +209,30 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
 
           {/* Fee Breakdown */}
           <Box sx={{ ml: 2, mb: 2 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-              <Typography variant="body2" sx={{ minWidth: 80 }}>Broker Fee</Typography>
-              <Typography variant="body2">2.5%</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
+              <Typography variant="body2">Broker Fee</Typography>
+              <TextField
+                value={brokerFee}
+                onChange={(e) => setBrokerFee(e.target.value)}
+                size="small"
+                sx={{ width: 60 }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                }}
+              />
               <Typography variant="body2">+</Typography>
-              <Typography variant="body2">BK Fee</Typography>
-              <Typography variant="body2">2.5%</Typography>
+              <Typography variant="body2">BK Fee 2.5%</Typography>
               <Typography variant="body2">+</Typography>
               <Typography variant="body2">Time to hold Funds</Typography>
-              <Typography variant="body2">1 Day(s)</Typography>
+              <TextField
+                value={timeToHoldFunds}
+                onChange={(e) => setTimeToHoldFunds(e.target.value)}
+                size="small"
+                sx={{ width: 60 }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">Days</InputAdornment>,
+                }}
+              />
             </Box>
             
             <FormControlLabel
@@ -217,7 +245,7 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
               }
               label={
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="body2">Add Cash handling fee (1%)</Typography>
+                  <Typography variant="body2">Add Cash handling fee</Typography>
                   <Typography variant="body2">2.5%</Typography>
                 </Box>
               }
@@ -230,7 +258,7 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
               <Box sx={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: 'primary.main' }} />
               <Typography variant="body2">ZAR {enterAmount || '0'}</Typography>
               <Typography variant="body2">
-                {addCashHandling ? '7.5%' : '5%'} Total Fee
+                {(parseFloat(brokerFee) + 2.5 + (addCashHandling ? 2.5 : 0)).toFixed(1)}% Total Fee
               </Typography>
             </Box>
             
@@ -277,20 +305,6 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
         <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
           Fill out the Quote
         </Typography>
-
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Typography variant="body2">Is this trade linked to an existing deal?</Typography>
-            <RadioGroup
-              row
-              value={isLinkedDeal}
-              onChange={(e) => setIsLinkedDeal(e.target.value)}
-            >
-              <FormControlLabel value="Yes" control={<Radio size="small" />} label="Yes" />
-              <FormControlLabel value="No" control={<Radio size="small" />} label="No" />
-            </RadioGroup>
-          </Box>
-        </Box>
 
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
@@ -343,10 +357,10 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
             <TextField
               fullWidth
               label="Due Date"
-              placeholder="Text Field"
+              value={expirationTime?.toISOString().split('T')[0] || ''}
               size="small"
-              value={formData.dueDate}
-              onChange={(e) => handleInputChange('dueDate', e.target.value)}
+              disabled
+              sx={{ backgroundColor: 'grey.100' }}
             />
           </Grid>
 
