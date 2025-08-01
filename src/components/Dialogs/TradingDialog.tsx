@@ -47,14 +47,17 @@ function uuid() {
   });
 }
 
+const currencies = ['ZAR', 'USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD'];
 const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) => {
   const [ticketNumber, setTicketNumber] = useState('');
   const [enterAmount, setEnterAmount] = useState('');
+  const [enterCurrency, setEnterCurrency] = useState('ZAR');
   const [targetCurrency, setTargetCurrency] = useState('USD');
   const [targetAmount, setTargetAmount] = useState('0');
   const [guaranteedRate, setGuaranteedRate] = useState('0');
   const [totalAmountConvert, setTotalAmountConvert] = useState('0');
   const [addCashHandling, setAddCashHandling] = useState(false);
+  const [cashHandlingFee, setCashHandlingFee] = useState('2.5');
   const [brokerFee, setBrokerFee] = useState('1');
   const [timeToHoldFunds, setTimeToHoldFunds] = useState('1');
   const [expirationTime, setExpirationTime] = useState<Date | null>(null);
@@ -84,9 +87,9 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
       const amount = parseFloat(enterAmount) || 0;
       const brokerFeePercent = parseFloat(brokerFee) || 1;
       const bkFee = 2.5; // 2.5%
-      const cashHandlingFee = addCashHandling ? 2.5 : 0; // 2.5% if checked
+      const cashHandlingFeePercent = addCashHandling ? (parseFloat(cashHandlingFee) || 2.5) : 0;
       
-      const totalFeePercentage = brokerFeePercent + bkFee + cashHandlingFee;
+      const totalFeePercentage = brokerFeePercent + bkFee + cashHandlingFeePercent;
       const totalFeeAmount = (amount * totalFeePercentage) / 100;
       const convertAmount = amount - totalFeeAmount;
       
@@ -94,13 +97,13 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
     } else {
       setTotalAmountConvert('0');
     }
-  }, [enterAmount, addCashHandling, brokerFee]);
+  }, [enterAmount, addCashHandling, brokerFee, cashHandlingFee]);
 
   // Calculate expiration time based on time to hold funds
   useEffect(() => {
-    const days = parseInt(timeToHoldFunds) || 1;
+    const days = parseFloat(timeToHoldFunds) || 1;
     const expiration = new Date();
-    expiration.setDate(expiration.getDate() + days);
+    expiration.setTime(expiration.getTime() + (days * 24 * 60 * 60 * 1000));
     setExpirationTime(expiration);
   }, [timeToHoldFunds]);
 
@@ -115,11 +118,13 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
     const tradeData = {
       ticketNumber,
       enterAmount,
+      enterCurrency,
       targetCurrency,
       targetAmount,
       guaranteedRate,
       totalAmountConvert,
       addCashHandling,
+      cashHandlingFee,
       brokerFee,
       timeToHoldFunds,
       expirationTime,
@@ -135,10 +140,12 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
   const handleClose = () => {
     // Reset form
     setEnterAmount('');
+    setEnterCurrency('ZAR');
     setTargetAmount('0');
     setGuaranteedRate('0');
     setTotalAmountConvert('0');
     setAddCashHandling(false);
+    setCashHandlingFee('2.5');
     setBrokerFee('1');
     setTimeToHoldFunds('1');
     setExpirationTime(null);
@@ -193,16 +200,20 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
             <TextField
               value={enterAmount}
               onChange={(e) => setEnterAmount(e.target.value)}
-              placeholder="R 999,999.00"
+              placeholder="999,999.00"
               size="small"
               sx={{ width: 150 }}
-              InputProps={{
-                startAdornment: <InputAdornment position="start">R</InputAdornment>,
-              }}
             />
             <FormControl size="small" sx={{ minWidth: 80 }}>
-              <Select value="ZAR" disabled>
-                <MenuItem value="ZAR">ZAR</MenuItem>
+              <Select 
+                value={enterCurrency} 
+                onChange={(e) => setEnterCurrency(e.target.value)}
+              >
+                {currencies.map((currency) => (
+                  <MenuItem key={currency} value={currency}>
+                    {currency}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Box>
@@ -215,6 +226,7 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
                 value={brokerFee}
                 onChange={(e) => setBrokerFee(e.target.value)}
                 size="small"
+                type="number"
                 sx={{ width: 60 }}
                 InputProps={{
                   endAdornment: <InputAdornment position="end">%</InputAdornment>,
@@ -228,6 +240,7 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
                 value={timeToHoldFunds}
                 onChange={(e) => setTimeToHoldFunds(e.target.value)}
                 size="small"
+                type="number"
                 sx={{ width: 60 }}
                 InputProps={{
                   endAdornment: <InputAdornment position="end">Days</InputAdornment>,
@@ -235,36 +248,40 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
               />
             </Box>
             
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={addCashHandling}
-                  onChange={(e) => setAddCashHandling(e.target.checked)}
-                  size="small"
-                />
-              }
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="body2">Add Cash handling fee</Typography>
-                  <Typography variant="body2">2.5%</Typography>
-                </Box>
-              }
-            />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Checkbox
+                checked={addCashHandling}
+                onChange={(e) => setAddCashHandling(e.target.checked)}
+                size="small"
+              />
+              <Typography variant="body2">Add Cash handling fee</Typography>
+              <TextField
+                value={cashHandlingFee}
+                onChange={(e) => setCashHandlingFee(e.target.value)}
+                size="small"
+                type="number"
+                disabled={!addCashHandling}
+                sx={{ width: 60 }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                }}
+              />
+            </Box>
           </Box>
 
           {/* Amount Breakdown */}
           <Box sx={{ ml: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Box sx={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: 'primary.main' }} />
-              <Typography variant="body2">ZAR {enterAmount || '0'}</Typography>
+              <Typography variant="body2">{enterCurrency} {enterAmount || '0'}</Typography>
               <Typography variant="body2">
-                {(parseFloat(brokerFee) + 2.5 + (addCashHandling ? 2.5 : 0)).toFixed(1)}% Total Fee
+                {(parseFloat(brokerFee) + 2.5 + (addCashHandling ? parseFloat(cashHandlingFee) : 0)).toFixed(1)}% Total Fee
               </Typography>
             </Box>
             
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Box sx={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: 'primary.main' }} />
-              <Typography variant="body2">ZAR {totalAmountConvert}</Typography>
+              <Typography variant="body2">{enterCurrency} {totalAmountConvert}</Typography>
               <Typography variant="body2">Total amount we'll convert</Typography>
             </Box>
             
@@ -292,9 +309,11 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
               value={targetCurrency}
               onChange={(e) => setTargetCurrency(e.target.value)}
             >
-              <MenuItem value="USD">USD</MenuItem>
-              <MenuItem value="EUR">EUR</MenuItem>
-              <MenuItem value="GBP">GBP</MenuItem>
+              {currencies.map((currency) => (
+                <MenuItem key={currency} value={currency}>
+                  {currency}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Box>
