@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { ArrowLeft as ArrowLeftIcon } from '@mui/icons-material';
 import TradingDialog from '../../components/Dialogs/TradingDialog';
+import MoneySendDialog from '../../components/Dialogs/MoneySendDialog';
 
 interface Transaction {
   id: string;
@@ -118,6 +119,7 @@ const ClientProfile = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [tradingDialogOpen, setTradingDialogOpen] = useState(false);
+  const [moneySendDialogOpen, setMoneySendDialogOpen] = useState(false);
 
   const handleEdit = () => {
     setIsEditing(!isEditing);
@@ -139,13 +141,17 @@ const ClientProfile = () => {
   };
 
   const handleMoneySend = () => {
-    console.log('Money Send clicked');
-    // Implement money send functionality
+    setMoneySendDialogOpen(true);
   };
 
   const handleTradeSubmit = (tradeData: any) => {
     console.log('Trade submitted:', tradeData);
     // Implement trade submission logic
+  };
+
+  const handleMoneySendSubmit = (moneySendData: any) => {
+    console.log('Money Send submitted:', moneySendData);
+    // Implement money send submission logic
   };
 
   const getStatusColor = (status: string) => {
@@ -724,6 +730,14 @@ const ClientProfile = () => {
         onClose={() => setTradingDialogOpen(false)}
         client={client}
         onSubmit={handleTradeSubmit}
+      />
+
+      {/* Money Send Dialog */}
+      <MoneySendDialog
+        open={moneySendDialogOpen}
+        onClose={() => setMoneySendDialogOpen(false)}
+        client={client}
+        onSubmit={handleMoneySendSubmit}
       />
     </Box>
   );
