@@ -14,163 +14,228 @@ import {
   IconButton,
   Box,
   Typography,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  Checkbox,
-  Divider,
+  Avatar,
+  Chip,
   InputAdornment,
+  Paper,
 } from '@mui/material';
 import { X as CloseIcon } from 'lucide-react';
 
-interface Client {
-  clientId: string;
-  otherName: string;
-  surname: string;
-  dob: string;
-  idPassport: string;
-  mobile: string;
+interface Currency {
+  id: string;
+  name: string;
+  symbol: string;
+  icon: string;
+  color: string;
 }
 
 interface TradingDialogProps {
   open: boolean;
   onClose: () => void;
-  client: Client;
+  tradingType: 'buy' | 'sell';
   onSubmit: (tradeData: any) => void;
 }
 
-// UUID generator function
-function uuid() {
-  return 'xxxxxxxxxxxxxxxxyxxxyxxx'.replace(/[xy]/g, function (c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(24);
-  });
-}
+// Mock currencies - replace with API call
+const mockCurrencies: Currency[] = [
+  {
+    id: 'xrp',
+    name: 'Ripple',
+    symbol: 'XRP',
+    icon: 'R',
+    color: '#23292F',
+  },
+  {
+    id: 'btc',
+    name: 'Bitcoin',
+    symbol: 'BTC',
+    icon: 'B',
+    color: '#F7931A',
+  },
+  {
+    id: 'eth',
+    name: 'Ethereum',
+    symbol: 'ETH',
+    icon: 'E',
+    color: '#627EEA',
+  },
+  {
+    id: 'usdt',
+    name: 'Tether',
+    symbol: 'USDT',
+    icon: 'T',
+    color: '#26A17B',
+  },
+];
 
-const currencies = ['ZAR', 'USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD'];
-const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) => {
-  const [ticketNumber, setTicketNumber] = useState('');
-  const [enterAmount, setEnterAmount] = useState('');
-  const [enterCurrency, setEnterCurrency] = useState('ZAR');
-  const [targetCurrency, setTargetCurrency] = useState('USD');
-  const [targetAmount, setTargetAmount] = useState('0');
-  const [guaranteedRate, setGuaranteedRate] = useState('0');
-  const [totalAmountConvert, setTotalAmountConvert] = useState('0');
-  const [addCashHandling, setAddCashHandling] = useState(false);
-  const [cashHandlingFee, setCashHandlingFee] = useState('2.5');
-  const [brokerFee, setBrokerFee] = useState('1');
-  const [timeToHoldFunds, setTimeToHoldFunds] = useState('1');
-  const [expirationTime, setExpirationTime] = useState<Date | null>(null);
-  
-  const [formData, setFormData] = useState({
-    broker: '',
-    service: 'OTC',
-    dueTime: 'OTC',
-    email: '',
-    cellphoneNumber: client.mobile || '',
-    description: '',
-    confirmProcessing: false,
-  });
+const TradingDialog = ({ open, onClose, tradingType, onSubmit }: TradingDialogProps) => {
+  const [sellCurrency, setSellCurrency] = useState<Currency>(mockCurrencies[0]);
+  const [buyCurrency, setBuyCurrency] = useState<Currency>(mockCurrencies[1]);
+  const [amount, setAmount] = useState('');
+  const [availableBalance, setAvailableBalance] = useState('0.00');
+  const [lastTradedPrice, setLastTradedPrice] = useState('2332.00');
+  const [estimatedPrice, setEstimatedPrice] = useState('0.245');
+  const [youWillReceive, setYouWillReceive] = useState('0.245');
 
-  // Generate ticket number on component mount
+  // API integration functions
+  const fetchCurrencies = async (): Promise<Currency[]> => {
+    // Replace with actual API call
+    // const response = await fetch('/api/currencies');
+    // return response.json();
+    return mockCurrencies;
+  };
+
+  const fetchTradingData = async (fromCurrency: string, toCurrency: string) => {
+    // Replace with actual API call
+    // const response = await fetch(`/api/trading/price?from=${fromCurrency}&to=${toCurrency}`);
+    // const data = await response.json();
+    
+    // Mock data
+    setLastTradedPrice('2332.00');
+    setEstimatedPrice('0.245');
+    setAvailableBalance('0.00');
+  };
+
   useEffect(() => {
     if (open) {
-      const fullUuid = uuid();
-      const shortTicket = fullUuid.substring(0, 10); // First part of UUID
-      setTicketNumber(shortTicket);
+      fetchTradingData(sellCurrency.symbol, buyCurrency.symbol);
     }
-  }, [open]);
+  }, [open, sellCurrency, buyCurrency]);
 
-  // Calculate total amount we'll convert
   useEffect(() => {
-    if (enterAmount) {
-      const amount = parseFloat(enterAmount) || 0;
-      const brokerFeePercent = parseFloat(brokerFee) || 1;
-      const bkFee = 2.5; // 2.5%
-      const cashHandlingFeePercent = addCashHandling ? (parseFloat(cashHandlingFee) || 2.5) : 0;
-      
-      const totalFeePercentage = brokerFeePercent + bkFee + cashHandlingFeePercent;
-      const totalFeeAmount = (amount * totalFeePercentage) / 100;
-      const convertAmount = amount - totalFeeAmount;
-      
-      setTotalAmountConvert(convertAmount.toFixed(4));
+    // Calculate estimated receive amount
+    if (amount && estimatedPrice) {
+      const receiveAmount = (parseFloat(amount) * parseFloat(estimatedPrice)).toFixed(3);
+      setYouWillReceive(receiveAmount);
     } else {
-      setTotalAmountConvert('0');
+      setYouWillReceive('0.000');
     }
-  }, [enterAmount, addCashHandling, brokerFee, cashHandlingFee]);
+  }, [amount, estimatedPrice]);
 
-  // Calculate expiration time based on time to hold funds
-  useEffect(() => {
-    const days = parseFloat(timeToHoldFunds) || 1;
-    const expiration = new Date();
-    expiration.setTime(expiration.getTime() + (days * 24 * 60 * 60 * 1000));
-    setExpirationTime(expiration);
-  }, [timeToHoldFunds]);
+  const handleSellCurrencyChange = (currencyId: string) => {
+    const currency = mockCurrencies.find(c => c.id === currencyId);
+    if (currency) {
+      setSellCurrency(currency);
+    }
+  };
 
-  const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  const handleBuyCurrencyChange = (currencyId: string) => {
+    const currency = mockCurrencies.find(c => c.id === currencyId);
+    if (currency) {
+      setBuyCurrency(currency);
+    }
   };
 
   const handleSubmit = () => {
     const tradeData = {
-      ticketNumber,
-      enterAmount,
-      enterCurrency,
-      targetCurrency,
-      targetAmount,
-      guaranteedRate,
-      totalAmountConvert,
-      addCashHandling,
-      cashHandlingFee,
-      brokerFee,
-      timeToHoldFunds,
-      expirationTime,
-      ...formData,
-      dueDate: expirationTime?.toISOString().split('T')[0] || '',
-      clientData: client,
+      type: tradingType,
+      sellCurrency: sellCurrency,
+      buyCurrency: buyCurrency,
+      amount: parseFloat(amount),
+      estimatedPrice: parseFloat(estimatedPrice),
+      youWillReceive: parseFloat(youWillReceive),
+      timestamp: new Date().toISOString(),
     };
     
     onSubmit(tradeData);
-    onClose();
   };
 
   const handleClose = () => {
-    // Reset form
-    setEnterAmount('');
-    setEnterCurrency('ZAR');
-    setTargetAmount('0');
-    setGuaranteedRate('0');
-    setTotalAmountConvert('0');
-    setAddCashHandling(false);
-    setCashHandlingFee('2.5');
-    setBrokerFee('1');
-    setTimeToHoldFunds('1');
-    setExpirationTime(null);
-    setFormData({
-      broker: '',
-      service: 'OTC',
-      dueTime: 'OTC',
-      email: '',
-      cellphoneNumber: client.mobile || '',
-      description: '',
-      confirmProcessing: false,
-    });
+    setAmount('');
+    setYouWillReceive('0.000');
     onClose();
   };
 
+  const CurrencySelector = ({ 
+    currency, 
+    onChange, 
+    label 
+  }: { 
+    currency: Currency; 
+    onChange: (currencyId: string) => void;
+    label: string;
+  }) => (
+    <FormControl fullWidth>
+      <Select
+        value={currency.id}
+        onChange={(e) => onChange(e.target.value)}
+        displayEmpty
+        sx={{
+          backgroundColor: 'grey.50',
+          '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+          '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            border: '2px solid',
+            borderColor: 'primary.main',
+          },
+          borderRadius: 2,
+          height: 56,
+        }}
+        renderValue={() => (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Avatar
+              sx={{
+                width: 24,
+                height: 24,
+                backgroundColor: currency.color,
+                color: 'white',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+              }}
+            >
+              {currency.icon}
+            </Avatar>
+            <Box>
+              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                {currency.name}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {currency.symbol}
+              </Typography>
+            </Box>
+          </Box>
+        )}
+      >
+        {mockCurrencies.map((curr) => (
+          <MenuItem key={curr.id} value={curr.id}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Avatar
+                sx={{
+                  width: 24,
+                  height: 24,
+                  backgroundColor: curr.color,
+                  color: 'white',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                }}
+              >
+                {curr.icon}
+              </Avatar>
+              <Box>
+                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                  {curr.name}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {curr.symbol}
+                </Typography>
+              </Box>
+            </Box>
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  );
+
   return (
-    <Dialog 
-      open={open} 
-      onClose={handleClose} 
-      maxWidth="md" 
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      maxWidth="sm"
       fullWidth
       PaperProps={{
         sx: {
           borderRadius: 3,
-          maxHeight: '90vh',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
         }
       }}
     >
@@ -183,7 +248,7 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
         }}
       >
         <Typography variant="h6" sx={{ fontWeight: 600 }}>
-          Customer
+          Trading
         </Typography>
         <IconButton onClick={handleClose}>
           <CloseIcon size={20} />
@@ -191,261 +256,165 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
       </DialogTitle>
 
       <DialogContent sx={{ px: 3 }}>
-        {/* Enter Amount Section */}
-        <Box sx={{ mb: 3 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-            <Typography variant="body1" sx={{ minWidth: 120 }}>
-              Enter Amount
-            </Typography>
-            <TextField
-              value={enterAmount}
-              onChange={(e) => setEnterAmount(e.target.value)}
-              placeholder="999,999.00"
-              size="small"
-              sx={{ width: 150 }}
-            />
-            <FormControl size="small" sx={{ minWidth: 80 }}>
-              <Select 
-                value={enterCurrency} 
-                onChange={(e) => setEnterCurrency(e.target.value)}
-              >
-                {currencies.map((currency) => (
-                  <MenuItem key={currency} value={currency}>
-                    {currency}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-
-          {/* Fee Breakdown */}
-          <Box sx={{ ml: 2, mb: 2 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
-              <Typography variant="body2">Broker Fee</Typography>
-              <TextField
-                value={brokerFee}
-                onChange={(e) => setBrokerFee(e.target.value)}
-                size="small"
-                type="number"
-                sx={{ width: 60 }}
-                InputProps={{
-                  endAdornment: <InputAdornment position="end">%</InputAdornment>,
-                }}
-              />
-              <Typography variant="body2">+</Typography>
-              <Typography variant="body2">BK Fee 2.5%</Typography>
-              <Typography variant="body2">+</Typography>
-              <Typography variant="body2">Time to hold Funds</Typography>
-              <TextField
-                value={timeToHoldFunds}
-                onChange={(e) => setTimeToHoldFunds(e.target.value)}
-                size="small"
-                type="number"
-                sx={{ width: 60 }}
-                InputProps={{
-                  endAdornment: <InputAdornment position="end">Days</InputAdornment>,
-                }}
-              />
-            </Box>
-            
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Checkbox
-                checked={addCashHandling}
-                onChange={(e) => setAddCashHandling(e.target.checked)}
-                size="small"
-              />
-              <Typography variant="body2">Add Cash handling fee</Typography>
-              <TextField
-                value={cashHandlingFee}
-                onChange={(e) => setCashHandlingFee(e.target.value)}
-                size="small"
-                type="number"
-                disabled={!addCashHandling}
-                sx={{ width: 60 }}
-                InputProps={{
-                  endAdornment: <InputAdornment position="end">%</InputAdornment>,
-                }}
-              />
-            </Box>
-          </Box>
-
-          {/* Amount Breakdown */}
-          <Box sx={{ ml: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Box sx={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: 'primary.main' }} />
-              <Typography variant="body2">{enterCurrency} {enterAmount || '0'}</Typography>
-              <Typography variant="body2">
-                {(parseFloat(brokerFee) + 2.5 + (addCashHandling ? parseFloat(cashHandlingFee) : 0)).toFixed(1)}% Total Fee
-              </Typography>
-            </Box>
-            
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Box sx={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: 'primary.main' }} />
-              <Typography variant="body2">{enterCurrency} {totalAmountConvert}</Typography>
-              <Typography variant="body2">Total amount we'll convert</Typography>
-            </Box>
-            
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Box sx={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: 'primary.main' }} />
-              <Typography variant="body2">{guaranteedRate}</Typography>
-              <Typography variant="body2">Guaranteed Rate (15 min)</Typography>
-            </Box>
-          </Box>
-        </Box>
-
-        {/* Target Currency Section */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-          <Radio checked disabled />
-          <Typography variant="body1">Target Currency</Typography>
-          <TextField
-            value={targetAmount}
-            placeholder="R 999,999.00"
-            size="small"
+        {/* Buy/Sell Toggle */}
+        <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
+          <Button
+            variant={tradingType === 'sell' ? 'contained' : 'outlined'}
+            onClick={() => {}} // Read-only based on props
             disabled
-            sx={{ width: 150 }}
-          />
-          <FormControl size="small" sx={{ minWidth: 80 }}>
-            <Select
-              value={targetCurrency}
-              onChange={(e) => setTargetCurrency(e.target.value)}
-            >
-              {currencies.map((currency) => (
-                <MenuItem key={currency} value={currency}>
-                  {currency}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+            sx={{
+              backgroundColor: tradingType === 'sell' ? 'primary.main' : 'transparent',
+              borderColor: 'primary.main',
+              color: tradingType === 'sell' ? 'white' : 'primary.main',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: 4,
+              py: 1,
+              borderRadius: 2,
+              flex: 1,
+            }}
+          >
+            Sell
+          </Button>
+          <Button
+            variant={tradingType === 'buy' ? 'contained' : 'outlined'}
+            onClick={() => {}} // Read-only based on props
+            disabled
+            sx={{
+              backgroundColor: tradingType === 'buy' ? 'primary.main' : 'transparent',
+              borderColor: 'primary.main',
+              color: tradingType === 'buy' ? 'white' : 'primary.main',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: 4,
+              py: 1,
+              borderRadius: 2,
+              flex: 1,
+            }}
+          >
+            Buy
+          </Button>
         </Box>
 
-        <Divider sx={{ my: 3 }} />
-
-        {/* Fill out the Quote Section */}
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-          Fill out the Quote
-        </Typography>
-
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Broker"
-              placeholder="Text Field"
-              size="small"
-              value={formData.broker}
-              onChange={(e) => handleInputChange('broker', e.target.value)}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Ticket Number"
-              value={ticketNumber}
-              size="small"
-              disabled
-              sx={{ backgroundColor: 'grey.100' }}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Service</InputLabel>
-              <Select
-                value={formData.service}
-                label="Service"
-                onChange={(e) => handleInputChange('service', e.target.value)}
-              >
-                <MenuItem value="OTC">OTC</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Client Name"
-              value={`${client.otherName} ${client.surname}`}
-              size="small"
-              disabled
-              sx={{ backgroundColor: 'grey.100' }}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Due Date"
-              value={expirationTime?.toISOString().split('T')[0] || ''}
-              size="small"
-              disabled
-              sx={{ backgroundColor: 'grey.100' }}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Cellphone Number"
-              value={formData.cellphoneNumber}
-              size="small"
-              onChange={(e) => handleInputChange('cellphoneNumber', e.target.value)}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Due Time</InputLabel>
-              <Select
-                value={formData.dueTime}
-                label="Due Time"
-                onChange={(e) => handleInputChange('dueTime', e.target.value)}
-              >
-                <MenuItem value="OTC">OTC</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Email"
-              placeholder="Text Field"
-              size="small"
-              value={formData.email}
-              onChange={(e) => handleInputChange('email', e.target.value)}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              multiline
-              rows={3}
-              placeholder="Describe your trade in 50 words or less"
-              value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={formData.confirmProcessing}
-                  onChange={(e) => handleInputChange('confirmProcessing', e.target.checked)}
+        {/* Sell Section */}
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+            {tradingType === 'sell' ? 'Sell' : 'Spend'}
+          </Typography>
+          
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12} sm={5}>
+              <CurrencySelector
+                currency={sellCurrency}
+                onChange={handleSellCurrencyChange}
+                label="From Currency"
+              />
+            </Grid>
+            <Grid item xs={12} sm={7}>
+              <Box>
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                  Amount
+                </Typography>
+                <TextField
+                  fullWidth
+                  placeholder="XXXXXX"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  type="number"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: 'grey.50',
+                      borderRadius: 2,
+                      height: 56,
+                      '& fieldset': { border: 'none' },
+                      '&:hover fieldset': { border: 'none' },
+                      '&.Mui-focused fieldset': {
+                        border: '2px solid',
+                        borderColor: 'primary.main',
+                      },
+                    },
+                  }}
                 />
-              }
-              label="Please confirm if this quote should be processed by our team"
-            />
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                  <Typography variant="caption" color="text.secondary">
+                    {availableBalance} Available
+                  </Typography>
+                  <Button
+                    variant="text"
+                    size="small"
+                    sx={{
+                      color: 'primary.main',
+                      textTransform: 'none',
+                      fontSize: '0.75rem',
+                      minWidth: 'auto',
+                      p: 0,
+                    }}
+                  >
+                    Add Funds
+                  </Button>
+                </Box>
+              </Box>
+            </Grid>
           </Grid>
-        </Grid>
+        </Box>
+
+        {/* For Section */}
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+            For
+          </Typography>
+          
+          <CurrencySelector
+            currency={buyCurrency}
+            onChange={handleBuyCurrencyChange}
+            label="To Currency"
+          />
+        </Box>
+
+        {/* Trading Information */}
+        <Paper
+          elevation={0}
+          sx={{
+            p: 2,
+            backgroundColor: 'grey.50',
+            borderRadius: 2,
+            mb: 3,
+          }}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              Last Traded Price :
+            </Typography>
+            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              {lastTradedPrice} {sellCurrency.symbol}
+            </Typography>
+          </Box>
+          
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+            <Typography variant="body2" color="text.secondary">
+              Estimated Price :
+            </Typography>
+            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              {estimatedPrice} {buyCurrency.symbol}
+            </Typography>
+          </Box>
+          
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
+            <Typography variant="body1" sx={{ fontWeight: 600 }}>
+              You will receive :
+            </Typography>
+            <Typography variant="body1" sx={{ fontWeight: 600, color: 'primary.main' }}>
+              {youWillReceive} {buyCurrency.symbol}
+            </Typography>
+          </Box>
+        </Paper>
       </DialogContent>
 
       <DialogActions sx={{ p: 3, pt: 2 }}>
         <Button
           variant="contained"
           onClick={handleSubmit}
+          disabled={!amount || parseFloat(amount) <= 0}
           fullWidth
           sx={{
             backgroundColor: 'primary.main',
@@ -453,9 +422,16 @@ const TradingDialog = ({ open, onClose, client, onSubmit }: TradingDialogProps) 
             fontSize: '1rem',
             fontWeight: 600,
             textTransform: 'none',
+            '&:hover': {
+              backgroundColor: 'primary.dark',
+            },
+            '&:disabled': {
+              backgroundColor: 'grey.300',
+              color: 'grey.500',
+            },
           }}
         >
-          Quote
+          {tradingType === 'sell' ? 'Sell' : 'Buy'} {sellCurrency.symbol}
         </Button>
       </DialogActions>
     </Dialog>

@@ -23,6 +23,7 @@ import {
 } from '@mui/icons-material';
 import AddBeneficiaryDialog from '../../components/Dialogs/AddBeneficiaryDialog';
 import ViewBeneficiaryDialog from '../../components/Dialogs/ViewBeneficiaryDialog';
+import TradingDialog from '../../components/Dialogs/TradingDialog';
 
 // Types for API integration
 interface Beneficiary {
@@ -127,6 +128,8 @@ const Beneficiaries = () => {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
+  const [tradingDialogOpen, setTradingDialogOpen] = useState(false);
+  const [tradingType, setTradingType] = useState<'buy' | 'sell'>('sell');
 
   // API integration functions
   const fetchBeneficiaries = async (): Promise<Beneficiary[]> => {
@@ -257,27 +260,73 @@ const Beneficiaries = () => {
         <Typography variant="h4" component="h1" sx={{ fontWeight: 600 }}>
           Beneficiaries
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => setAddDialogOpen(true)}
-          sx={{
-            backgroundColor: 'primary.main',
-            color: 'white',
-            textTransform: 'none',
-            fontWeight: 500,
-            px: 3,
-            py: 1.5,
-            borderRadius: 2,
-            boxShadow: 'none',
-            '&:hover': {
-              backgroundColor: 'primary.dark',
-              boxShadow: '0 4px 12px rgba(15, 174, 128, 0.3)',
-            },
-          }}
-        >
-          Add Beneficiary
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setTradingType('sell');
+              setTradingDialogOpen(true);
+            }}
+            sx={{
+              backgroundColor: 'primary.main',
+              color: 'white',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: 3,
+              py: 1.5,
+              borderRadius: 2,
+              boxShadow: 'none',
+              '&:hover': {
+                backgroundColor: 'primary.dark',
+                boxShadow: '0 4px 12px rgba(15, 174, 128, 0.3)',
+              },
+            }}
+          >
+            Sell
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              setTradingType('buy');
+              setTradingDialogOpen(true);
+            }}
+            sx={{
+              borderColor: 'primary.main',
+              color: 'primary.main',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: 3,
+              py: 1.5,
+              borderRadius: 2,
+              '&:hover': {
+                borderColor: 'primary.dark',
+                backgroundColor: 'primary.light',
+              },
+            }}
+          >
+            Buy
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => setAddDialogOpen(true)}
+            sx={{
+              backgroundColor: 'secondary.main',
+              color: 'text.primary',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: 3,
+              py: 1.5,
+              borderRadius: 2,
+              boxShadow: 'none',
+              '&:hover': {
+                backgroundColor: 'secondary.dark',
+              },
+            }}
+          >
+            Add Beneficiary
+          </Button>
+        </Box>
       </Box>
 
       {/* Beneficiaries Table */}
@@ -478,6 +527,16 @@ const Beneficiaries = () => {
         }}
         beneficiary={selectedBeneficiary}
         onUpdate={handleUpdateBeneficiary}
+      />
+
+      <TradingDialog
+        open={tradingDialogOpen}
+        onClose={() => setTradingDialogOpen(false)}
+        tradingType={tradingType}
+        onSubmit={(tradeData) => {
+          console.log('Trade submitted:', tradeData);
+          setTradingDialogOpen(false);
+        }}
       />
 
       {/* Loading Overlay */}
