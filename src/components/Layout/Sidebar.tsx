@@ -27,7 +27,8 @@ import {
   SecurityOutlined as RightsIcon,
   SettingsOutlined as SettingsIcon,
   ArchiveOutlined as ArchiveIcon,
-  ContactsOutlined as BeneficiariesIcon
+  ContactsOutlined as BeneficiariesIcon,
+  SwapHorizOutlined as TransactionsIcon
 } from '@mui/icons-material';
 import { useMenu } from '../../context/MenuContext';
 // import logo from "../Assets/Logo.png";
@@ -40,6 +41,7 @@ const sidebarItems = [
   { name: 'Allocated', icon: <AllocatedIcon />, path: '/allocated' },
   { name: 'Withdraw', icon: <WithdrawIcon />, path: '/withdraw' },
   { name: 'Profiles', icon: <ProfilesIcon />, path: '/profiles' },
+  { name: 'Transactions', icon: <TransactionsIcon />, path: '/transactions' },
   { name: 'Beneficiaries', icon: <BeneficiariesIcon />, path: '/beneficiaries' },
   { name: 'Banks', icon: <BanksIcon />, path: '/banks' },
   { name: 'Fees', icon: <FeesIcon />, path: '/fees' },

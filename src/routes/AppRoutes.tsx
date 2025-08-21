@@ -8,6 +8,7 @@ import Withdraw from '../pages/WithdrawPage';
 import Profiles from '../pages/ProfilesPage';
 import ClientProfile from '../pages/ProfilesPage/ClientProfile';
 import TransactionHistory from '../pages/ProfilesPage/TransactionHistory';
+import Transactions from '../pages/Transactions';
 import Beneficiaries from '../pages/Beneficiaries';
 import Banks from '../pages/Banks';
 import Fees from '../pages/FeePage';
@@ -25,6 +26,7 @@ const AppRoutes = () => {
       <Route path="/allocated" element={<Allocated />} />
       <Route path="/withdraw" element={<Withdraw />} />
       <Route path="/profiles" element={<Profiles />} />
+      <Route path="/transactions" element={<Transactions />} />
       <Route path="/profiles/:username" element={<ClientProfile />} />
       <Route path="/profiles/:username/transactionhistory" element={<TransactionHistory />} />
       <Route path="/beneficiaries" element={<Beneficiaries />} />
