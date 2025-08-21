@@ -250,7 +250,7 @@ const Transactions = () => {
       label: 'Payment',
       width: '150px',
       align: 'right',
-      format: (value: number) => `R ${value.toLocaleString('en-ZA', { minimumFractionDigits: 2 })}`,
+          p: 2,
     },
     {
       id: 'depositWithdraw',
@@ -320,7 +320,7 @@ const Transactions = () => {
           elevation={0}
           sx={{
             p: 3,
-            mb: 3,
+            mb: 2,
             border: '1px solid',
             borderColor: 'divider',
             borderRadius: 3,
@@ -430,7 +430,7 @@ const Transactions = () => {
                     placeholder: 'dd/mm/yyyy',
                     sx: {
                       '& .MuiOutlinedInput-root': {
-                        backgroundColor: 'grey.50',
+                      height: 40,
                         borderRadius: 2,
                         height: 48,
                         '& fieldset': { border: 'none' },
@@ -466,7 +466,7 @@ const Transactions = () => {
                     }
                     label="Buy"
                     sx={{
-                      '& .MuiFormControlLabel-label': {
+                      height: 40,
                         fontSize: '0.875rem',
                         fontWeight: 500,
                       },
@@ -482,7 +482,7 @@ const Transactions = () => {
                           color: 'primary.main',
                           '&.Mui-checked': {
                             color: 'primary.main',
-                          },
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                         }}
                       />
                     }
@@ -536,11 +536,11 @@ const Transactions = () => {
 
         {/* Loading Overlay */}
         {loading && (
-          <Box
+                  py: 1,
             sx={{
               position: 'fixed',
               top: 0,
-              left: 0,
+        <Grid container spacing={2} alignItems="flex-end">
               right: 0,
               bottom: 0,
               backgroundColor: alpha(theme.palette.common.white, 0.8),
@@ -548,7 +548,7 @@ const Transactions = () => {
               alignItems: 'center',
               justifyContent: 'center',
               zIndex: 9999,
-            }}
+                  height: 40,
           >
             <Typography variant="h6" sx={{ color: 'primary.main' }}>
               Loading transactions...
@@ -561,3 +561,4 @@ const Transactions = () => {
 };
 
 export default Transactions;
+        maxHeight="calc(100vh - 320px)"
