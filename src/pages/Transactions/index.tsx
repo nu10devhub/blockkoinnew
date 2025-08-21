@@ -250,7 +250,6 @@ const Transactions = () => {
       label: 'Payment',
       width: '150px',
       align: 'right',
-          p: 2,
     },
     {
       id: 'depositWithdraw',
@@ -430,7 +429,7 @@ const Transactions = () => {
                     placeholder: 'dd/mm/yyyy',
                     sx: {
                       '& .MuiOutlinedInput-root': {
-                      height: 40,
+                        backgroundColor: 'grey.50',
                         borderRadius: 2,
                         height: 48,
                         '& fieldset': { border: 'none' },
@@ -466,7 +465,7 @@ const Transactions = () => {
                     }
                     label="Buy"
                     sx={{
-                      height: 40,
+                      '& .MuiFormControlLabel-label': {
                         fontSize: '0.875rem',
                         fontWeight: 500,
                       },
@@ -482,7 +481,7 @@ const Transactions = () => {
                           color: 'primary.main',
                           '&.Mui-checked': {
                             color: 'primary.main',
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                          },
                         }}
                       />
                     }
@@ -536,11 +535,11 @@ const Transactions = () => {
 
         {/* Loading Overlay */}
         {loading && (
-                  py: 1,
+          <Box
             sx={{
               position: 'fixed',
               top: 0,
-        <Grid container spacing={2} alignItems="flex-end">
+              left: 0,
               right: 0,
               bottom: 0,
               backgroundColor: alpha(theme.palette.common.white, 0.8),
@@ -548,7 +547,7 @@ const Transactions = () => {
               alignItems: 'center',
               justifyContent: 'center',
               zIndex: 9999,
-                  height: 40,
+            }}
           >
             <Typography variant="h6" sx={{ color: 'primary.main' }}>
               Loading transactions...
@@ -561,4 +560,3 @@ const Transactions = () => {
 };
 
 export default Transactions;
-        maxHeight="calc(100vh - 320px)"
