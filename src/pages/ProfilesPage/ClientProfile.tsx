@@ -8,6 +8,19 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  FormControl,
+  Grid,
+  Button,
+  Chip,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  FormControlLabel,
+  Checkbox,
+} from '@mui/material';
 import { ArrowLeft as ArrowLeftIcon } from '@mui/icons-material';
 import { RiShieldCheckFill } from 'react-icons/ri';
 import IndividualProfile from '../../components/Profiles/IndividualProfile';
@@ -85,41 +98,6 @@ const ClientProfile = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { username } = useParams();
-  
-  // Get client data from location state or use default
-  const client = location.state?.client || {
-    clientId: username,
-    otherName: 'John Michael',
-    surname: 'Smith',
-    dob: '15/03/1990',
-    idPassport: 'ID123456789',
-    mobile: '+27123456789',
-  };
-
-  const [profileData, setProfileData] = useState({
-    // Individual fields
-    firstName: client.otherName || 'Text Field',
-    lastName: client.surname || 'Text Field',
-    dateOfBirth: client.dob || 'Text Field',
-    depositReferenceCode: 'XXXXXXXXX',
-    emailId: 'Text Field',
-    mobile: client.mobile || 'XXXXXXXXXX',
-    passportNumber: client.idPassport || 'Text Field',
-    idNumber: 'Text Field',
-    addressLine1: 'Address Line 1',
-    addressLine2: 'Address Line 2',
-    city: 'City',
-    postCode: 'Post code',
-    state: 'State',
-    country: 'Country',
-    
-    // Business fields
-    companyName: 'Text Field',
-    position: 'XXXXXXXXX',
-    registrationNumber: 'Text Field',
-    employmentStatus: 'XXXXXXXXX',
-    sameAsOwnerAddress: false,
-  });
 
   const [isEditing, setIsEditing] = useState(false);
   const [tradingDialogOpen, setTradingDialogOpen] = useState(false);
@@ -129,19 +107,46 @@ const ClientProfile = () => {
   const [hasInternationalAccount, setHasInternationalAccount] = useState(false);
   const [internationalAccountData, setInternationalAccountData] = useState(null);
 
-  const handleEdit = () => {
-    setIsEditing(!isEditing);
-  };
+  const [profileData, setProfileData] = useState({
+    firstName: 'John',
+    lastName: 'Doe',
+    dateOfBirth: '1990-01-01',
+    depositReferenceCode: 'REF123',
+    emailId: 'john.doe@example.com',
+    mobile: '+27123456789',
+    passportNumber: 'A1234567',
+    idNumber: '9001010001088',
+    addressLine1: '123 Main St',
+    addressLine2: 'Apt 4B',
+    city: 'Cape Town',
+    postCode: '8001',
+    state: 'Western Cape',
+    country: 'South Africa',
+    companyName: 'Example Corp',
+    position: 'CEO',
+    registrationNumber: 'REG123456',
+    employmentStatus: 'Employed',
+    sameAsOwnerAddress: false,
+  });
 
-  const handleInputChange = (field: string, value: string) => {
+  const [client, setClient] = useState({
+    accountType: 'individual',
+  });
+
+  const handleInputChange = (field: string, value: any) => {
     setProfileData(prev => ({
       ...prev,
       [field]: value
     }));
   };
 
-  const handleViewAll = () => {
-    navigate(`/profiles/${username}/transactionhistory`);
+  const handleEdit = () => {
+    setIsEditing(!isEditing);
+  };
+
+  const handleProfileUpdate = (updatedData: any) => {
+    console.log('Profile updated:', updatedData);
+    // Here you would typically make an API call to update the profile
   };
 
   const handleTrade = () => {
@@ -160,42 +165,17 @@ const ClientProfile = () => {
     setViewAccountDialogOpen(true);
   };
 
-  const checkInternationalAccountStatus = async () => {
-    // Replace with actual API call
-    // const response = await fetch(`/api/clients/${client.clientId}/international-account`);
-    // const data = await response.json();
-    
-    // Mock API response - set to true to test active state
-    const mockAccountExists = Math.random() > 0.5; // Random for demo
-    setHasInternationalAccount(mockAccountExists);
-    
-    if (mockAccountExists) {
-      setInternationalAccountData({
-        bankName: 'Standard Chartered International',
-        accountNumber: 'INT123456789',
-        iban: 'GB29NWBK60161331926819',
-        swift: 'SCBLGB2L',
-        currency: 'GBP',
-        status: 'Active',
-        createdAt: '2024-01-15',
-      });
-    }
+  const handleViewAll = () => {
+    // Navigate to full transaction history
   };
 
-  const handleCreateAccountSubmit = async (accountData: any) => {
-    // Replace with actual API call
-    // const response = await fetch(`/api/clients/${client.clientId}/international-account`, {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ ...accountData, clientData: client }),
-    // });
-    
-    console.log('Creating international account:', { ...accountData, clientData: client });
-    
-    // Mock success - update state
+  const checkInternationalAccountStatus = () => {
+    // Check if user has international account
+  };
+
+  const handleCreateAccountSubmit = (accountData: any) => {
     setHasInternationalAccount(true);
     setInternationalAccountData({
-      bankName: 'Standard Chartered International',
       accountNumber: 'INT' + Math.floor(Math.random() * 1000000000),
       iban: 'GB29NWBK60161331926819',
       swift: 'SCBLGB2L',
@@ -1227,13 +1207,7 @@ const ClientProfile = () => {
                           backgroundColor: isEditing ? 'white' : 'grey.100',
                           '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
                           '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
-                          '&.Mui-focused .MuiOu
-                        }
-                        }
-              )
-              }
-  )
-}tlinedInput-notchedOutline': {
+                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                             border: '2px solid',
                             borderColor: 'primary.main',
                           },
