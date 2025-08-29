@@ -8,6 +8,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Chip,
+} from '@mui/material';
 import { ArrowLeft as ArrowLeftIcon } from '@mui/icons-material';
 import { RiShieldCheckFill } from 'react-icons/ri';
 import IndividualProfile from '../../components/Profiles/IndividualProfile';
@@ -81,6 +83,7 @@ const recentTransactions: Transaction[] = [
   },
 ];
 
+const ClientProfile = () => {
   const location = useLocation();
   const { username } = useParams();
 
@@ -99,6 +102,11 @@ const recentTransactions: Transaction[] = [
   const handleProfileUpdate = (updatedData: any) => {
     console.log('Profile updated:', updatedData);
     // Here you would typically make an API call to update the profile
+  };
+
+  const handleCreateAccountSubmit = (accountData: any) => {
+    setHasInternationalAccount(true);
+    setInternationalAccountData({
       accountNumber: 'INT' + Math.floor(Math.random() * 1000000000),
       iban: 'GB29NWBK60161331926819',
       swift: 'SCBLGB2L',
@@ -108,6 +116,10 @@ const recentTransactions: Transaction[] = [
     });
     
     setCreateAccountDialogOpen(false);
+  };
+
+  const checkInternationalAccountStatus = () => {
+    // Check account status logic
   };
 
   // Check account status on component mount
@@ -139,6 +151,9 @@ const recentTransactions: Transaction[] = [
         return { backgroundColor: '#F5F5F5', color: '#757575' };
     }
   };
+
+  const client = {};
+  const accountType = 'individual';
 
   const renderIndividualProfile = () => (
     <Paper
@@ -172,6 +187,21 @@ const recentTransactions: Transaction[] = [
             }}
           />
           <Chip
+            label="Verified"
+            size="small"
+            sx={{
+              backgroundColor: 'success.light',
+              color: 'success.dark',
+              fontWeight: 500,
+            }}
+          />
+        </Box>
+      </Box>
+    </Paper>
+  );
+
+  return (
+    <Box>
       <Box sx={{ mb: 3 }}>
         {accountType === 'business' ? (
           <BusinessProfile client={client} onUpdate={handleProfileUpdate} />
