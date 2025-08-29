@@ -16,8 +16,11 @@ import {
   Chip,
 } from '@mui/material';
 import { ArrowLeft as ArrowLeftIcon } from '@mui/icons-material';
+import { RiShieldCheckFill } from 'react-icons/ri';
 import TradingDialog from '../../components/Dialogs/TradingDialog';
 import MoneySendDialog from '../../components/Dialogs/MoneySendDialog';
+import CreateInternationalAccountDialog from '../../components/Dialogs/CreateInternationalAccountDialog';
+import ViewInternationalAccountDialog from '../../components/Dialogs/ViewInternationalAccountDialog';
 
 interface Transaction {
   id: string;
@@ -120,6 +123,10 @@ const ClientProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [tradingDialogOpen, setTradingDialogOpen] = useState(false);
   const [moneySendDialogOpen, setMoneySendDialogOpen] = useState(false);
+  const [createAccountDialogOpen, setCreateAccountDialogOpen] = useState(false);
+  const [viewAccountDialogOpen, setViewAccountDialogOpen] = useState(false);
+  const [hasInternationalAccount, setHasInternationalAccount] = useState(false);
+  const [internationalAccountData, setInternationalAccountData] = useState(null);
 
   const handleEdit = () => {
     setIsEditing(!isEditing);
@@ -143,6 +150,66 @@ const ClientProfile = () => {
   const handleMoneySend = () => {
     setMoneySendDialogOpen(true);
   };
+
+  const handleCreateInternationalAccount = () => {
+    setCreateAccountDialogOpen(true);
+  };
+
+  const handleViewInternationalAccount = () => {
+    setViewAccountDialogOpen(true);
+  };
+
+  const checkInternationalAccountStatus = async () => {
+    // Replace with actual API call
+    // const response = await fetch(`/api/clients/${client.clientId}/international-account`);
+    // const data = await response.json();
+    
+    // Mock API response - set to true to test active state
+    const mockAccountExists = Math.random() > 0.5; // Random for demo
+    setHasInternationalAccount(mockAccountExists);
+    
+    if (mockAccountExists) {
+      setInternationalAccountData({
+        bankName: 'Standard Chartered International',
+        accountNumber: 'INT123456789',
+        iban: 'GB29NWBK60161331926819',
+        swift: 'SCBLGB2L',
+        currency: 'GBP',
+        status: 'Active',
+        createdAt: '2024-01-15',
+      });
+    }
+  };
+
+  const handleCreateAccountSubmit = async (accountData: any) => {
+    // Replace with actual API call
+    // const response = await fetch(`/api/clients/${client.clientId}/international-account`, {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ ...accountData, clientData: client }),
+    // });
+    
+    console.log('Creating international account:', { ...accountData, clientData: client });
+    
+    // Mock success - update state
+    setHasInternationalAccount(true);
+    setInternationalAccountData({
+      bankName: 'Standard Chartered International',
+      accountNumber: 'INT' + Math.floor(Math.random() * 1000000000),
+      iban: 'GB29NWBK60161331926819',
+      swift: 'SCBLGB2L',
+      currency: accountData.currency,
+      status: 'Active',
+      createdAt: new Date().toISOString().split('T')[0],
+    });
+    
+    setCreateAccountDialogOpen(false);
+  };
+
+  // Check account status on component mount
+  React.useEffect(() => {
+    checkInternationalAccountStatus();
+  }, []);
 
   const handleTradeSubmit = (tradeData: any) => {
     console.log('Trade submitted:', tradeData);
@@ -223,6 +290,43 @@ const ClientProfile = () => {
           >
             Money Send
           </Button>
+          {hasInternationalAccount ? (
+            <Button
+              variant="contained"
+              onClick={handleViewInternationalAccount}
+              startIcon={<RiShieldCheckFill />}
+              sx={{
+                backgroundColor: 'success.main',
+                color: 'white',
+                textTransform: 'none',
+                fontWeight: 500,
+                px: 3,
+                '&:hover': {
+                  backgroundColor: 'success.dark',
+                },
+              }}
+            >
+              International Account Active
+            </Button>
+          ) : (
+            <Button
+              variant="outlined"
+              onClick={handleCreateInternationalAccount}
+              sx={{
+                borderColor: 'secondary.main',
+                color: 'secondary.main',
+                textTransform: 'none',
+                fontWeight: 500,
+                px: 3,
+                '&:hover': {
+                  borderColor: 'secondary.dark',
+                  backgroundColor: 'secondary.light',
+                },
+              }}
+            >
+              Create International Bank Account
+            </Button>
+          )}
         </Box>
       </Box>
 
@@ -738,6 +842,21 @@ const ClientProfile = () => {
         onClose={() => setMoneySendDialogOpen(false)}
         client={client}
         onSubmit={handleMoneySendSubmit}
+      />
+
+      {/* Create International Account Dialog */}
+      <CreateInternationalAccountDialog
+        open={createAccountDialogOpen}
+        onClose={() => setCreateAccountDialogOpen(false)}
+        client={client}
+        onSubmit={handleCreateAccountSubmit}
+      />
+
+      {/* View International Account Dialog */}
+      <ViewInternationalAccountDialog
+        open={viewAccountDialogOpen}
+        onClose={() => setViewAccountDialogOpen(false)}
+        accountData={internationalAccountData}
       />
     </Box>
   );
