@@ -14,6 +14,13 @@ import {
   TableHead,
   TableRow,
   Chip,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormControlLabel,
+  Checkbox,
+  Divider,
 } from '@mui/material';
 import { ArrowLeft as ArrowLeftIcon } from '@mui/icons-material';
 import { RiShieldCheckFill } from 'react-icons/ri';
@@ -102,22 +109,28 @@ const ClientProfile = () => {
   };
 
   const [profileData, setProfileData] = useState({
-    name: client.otherName || 'Text Field',
-    otherNames: 'Text Field',
+    // Individual fields
+    firstName: client.otherName || 'Text Field',
+    lastName: client.surname || 'Text Field',
+    dateOfBirth: client.dob || 'Text Field',
+    depositReferenceCode: 'XXXXXXXXX',
+    emailId: 'Text Field',
     mobile: client.mobile || 'XXXXXXXXXX',
-    profileStatus: 'Text Field',
-    activeSince: 'Text Field',
-    agent: 'XXXXXXXXXX',
-    idType: 'Text Field',
-    addressType: 'Text Field',
-    employmentStatus: 'XXXXXXXXXX',
-    street: 'Street',
-    suburb: 'Suburb',
+    passportNumber: client.idPassport || 'Text Field',
+    idNumber: 'Text Field',
+    addressLine1: 'Address Line 1',
+    addressLine2: 'Address Line 2',
     city: 'City',
     postCode: 'Post code',
-    province: 'Province',
+    state: 'State',
     country: 'Country',
-    userRole: 'Text Field',
+    
+    // Business fields
+    companyName: 'Text Field',
+    position: 'XXXXXXXXX',
+    registrationNumber: 'Text Field',
+    employmentStatus: 'XXXXXXXXX',
+    sameAsOwnerAddress: false,
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -236,6 +249,1085 @@ const ClientProfile = () => {
     }
   };
 
+  const renderIndividualProfile = () => (
+    <Paper
+      elevation={0}
+      sx={{
+        p: 3,
+        mb: 3,
+        border: '1px solid',
+        borderColor: 'divider',
+        borderRadius: 2,
+      }}
+    >
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 600,
+              color: 'text.primary',
+            }}
+          >
+            Client Profile
+          </Typography>
+          <Chip
+            label="Individual"
+            size="small"
+            sx={{
+              backgroundColor: 'primary.light',
+              color: 'primary.dark',
+              fontWeight: 500,
+            }}
+          />
+          <Chip
+            label="KYC Verified"
+            size="small"
+            sx={{
+              backgroundColor: 'success.light',
+              color: 'success.dark',
+              fontWeight: 500,
+            }}
+          />
+          <Chip
+            label="Admin"
+            size="small"
+            sx={{
+              backgroundColor: 'warning.light',
+              color: 'warning.dark',
+              fontWeight: 500,
+            }}
+          />
+        </Box>
+        <Button
+          variant="outlined"
+          onClick={handleEdit}
+          sx={{
+            borderColor: 'primary.main',
+            color: 'primary.main',
+            textTransform: 'none',
+            fontWeight: 500,
+            px: 3,
+            '&:hover': {
+              borderColor: 'primary.dark',
+              backgroundColor: 'primary.light',
+            },
+          }}
+        >
+          {isEditing ? 'Save' : 'Edit'}
+        </Button>
+      </Box>
+
+      <Grid container spacing={3}>
+        {/* Row 1 */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+            First Name
+          </Typography>
+          <TextField
+            fullWidth
+            value={profileData.firstName}
+            onChange={(e) => handleInputChange('firstName', e.target.value)}
+            disabled={!isEditing}
+            size="small"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                backgroundColor: isEditing ? 'white' : 'grey.100',
+                '& fieldset': { border: 'none' },
+                '&:hover fieldset': { border: 'none' },
+                '&.Mui-focused fieldset': {
+                  border: '2px solid',
+                  borderColor: 'primary.main',
+                },
+              },
+            }}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+            Last Name
+          </Typography>
+          <TextField
+            fullWidth
+            value={profileData.lastName}
+            onChange={(e) => handleInputChange('lastName', e.target.value)}
+            disabled={!isEditing}
+            size="small"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                backgroundColor: isEditing ? 'white' : 'grey.100',
+                '& fieldset': { border: 'none' },
+                '&:hover fieldset': { border: 'none' },
+                '&.Mui-focused fieldset': {
+                  border: '2px solid',
+                  borderColor: 'primary.main',
+                },
+              },
+            }}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+            Date of Birth
+          </Typography>
+          <TextField
+            fullWidth
+            value={profileData.dateOfBirth}
+            onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+            disabled={!isEditing}
+            size="small"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                backgroundColor: isEditing ? 'white' : 'grey.100',
+                '& fieldset': { border: 'none' },
+                '&:hover fieldset': { border: 'none' },
+                '&.Mui-focused fieldset': {
+                  border: '2px solid',
+                  borderColor: 'primary.main',
+                },
+              },
+            }}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+            Deposit Reference Code
+          </Typography>
+          <TextField
+            fullWidth
+            value={profileData.depositReferenceCode}
+            onChange={(e) => handleInputChange('depositReferenceCode', e.target.value)}
+            disabled={!isEditing}
+            size="small"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                backgroundColor: isEditing ? 'white' : 'grey.100',
+                '& fieldset': { border: 'none' },
+                '&:hover fieldset': { border: 'none' },
+                '&.Mui-focused fieldset': {
+                  border: '2px solid',
+                  borderColor: 'primary.main',
+                },
+              },
+            }}
+          />
+        </Grid>
+
+        {/* Row 2 */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+            Email ID
+          </Typography>
+          <TextField
+            fullWidth
+            value={profileData.emailId}
+            onChange={(e) => handleInputChange('emailId', e.target.value)}
+            disabled={!isEditing}
+            size="small"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                backgroundColor: isEditing ? 'white' : 'grey.100',
+                '& fieldset': { border: 'none' },
+                '&:hover fieldset': { border: 'none' },
+                '&.Mui-focused fieldset': {
+                  border: '2px solid',
+                  borderColor: 'primary.main',
+                },
+              },
+            }}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+            Mobile
+          </Typography>
+          <TextField
+            fullWidth
+            value={profileData.mobile}
+            onChange={(e) => handleInputChange('mobile', e.target.value)}
+            disabled={!isEditing}
+            size="small"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                backgroundColor: isEditing ? 'white' : 'grey.100',
+                '& fieldset': { border: 'none' },
+                '&:hover fieldset': { border: 'none' },
+                '&.Mui-focused fieldset': {
+                  border: '2px solid',
+                  borderColor: 'primary.main',
+                },
+              },
+            }}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+            Passport Number
+          </Typography>
+          <TextField
+            fullWidth
+            value={profileData.passportNumber}
+            onChange={(e) => handleInputChange('passportNumber', e.target.value)}
+            disabled={!isEditing}
+            size="small"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                backgroundColor: isEditing ? 'white' : 'grey.100',
+                '& fieldset': { border: 'none' },
+                '&:hover fieldset': { border: 'none' },
+                '&.Mui-focused fieldset': {
+                  border: '2px solid',
+                  borderColor: 'primary.main',
+                },
+              },
+            }}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+            ID Number
+          </Typography>
+          <TextField
+            fullWidth
+            value={profileData.idNumber}
+            onChange={(e) => handleInputChange('idNumber', e.target.value)}
+            disabled={!isEditing}
+            size="small"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                backgroundColor: isEditing ? 'white' : 'grey.100',
+                '& fieldset': { border: 'none' },
+                '&:hover fieldset': { border: 'none' },
+                '&.Mui-focused fieldset': {
+                  border: '2px solid',
+                  borderColor: 'primary.main',
+                },
+              },
+            }}
+          />
+        </Grid>
+
+        {/* Address Section */}
+        <Grid item xs={12}>
+          <Typography variant="body2" sx={{ mb: 2, fontWeight: 500 }}>
+            Address
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                fullWidth
+                placeholder="Address Line 1"
+                value={profileData.addressLine1}
+                onChange={(e) => handleInputChange('addressLine1', e.target.value)}
+                disabled={!isEditing}
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: isEditing ? 'white' : 'grey.100',
+                    '& fieldset': { border: 'none' },
+                    '&:hover fieldset': { border: 'none' },
+                    '&.Mui-focused fieldset': {
+                      border: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                fullWidth
+                placeholder="Address Line 2"
+                value={profileData.addressLine2}
+                onChange={(e) => handleInputChange('addressLine2', e.target.value)}
+                disabled={!isEditing}
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: isEditing ? 'white' : 'grey.100',
+                    '& fieldset': { border: 'none' },
+                    '&:hover fieldset': { border: 'none' },
+                    '&.Mui-focused fieldset': {
+                      border: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <FormControl fullWidth size="small" disabled={!isEditing}>
+                <Select
+                  value={profileData.city}
+                  onChange={(e) => handleInputChange('city', e.target.value)}
+                  displayEmpty
+                  sx={{
+                    backgroundColor: isEditing ? 'white' : 'grey.100',
+                    '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                    '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      border: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  }}
+                >
+                  <MenuItem value="City">City</MenuItem>
+                  <MenuItem value="Cape Town">Cape Town</MenuItem>
+                  <MenuItem value="Johannesburg">Johannesburg</MenuItem>
+                  <MenuItem value="Durban">Durban</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                fullWidth
+                placeholder="Post code"
+                value={profileData.postCode}
+                onChange={(e) => handleInputChange('postCode', e.target.value)}
+                disabled={!isEditing}
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: isEditing ? 'white' : 'grey.100',
+                    '& fieldset': { border: 'none' },
+                    '&:hover fieldset': { border: 'none' },
+                    '&.Mui-focused fieldset': {
+                      border: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <FormControl fullWidth size="small" disabled={!isEditing}>
+                <Select
+                  value={profileData.state}
+                  onChange={(e) => handleInputChange('state', e.target.value)}
+                  displayEmpty
+                  sx={{
+                    backgroundColor: isEditing ? 'white' : 'grey.100',
+                    '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                    '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      border: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  }}
+                >
+                  <MenuItem value="State">State</MenuItem>
+                  <MenuItem value="Western Cape">Western Cape</MenuItem>
+                  <MenuItem value="Gauteng">Gauteng</MenuItem>
+                  <MenuItem value="KwaZulu-Natal">KwaZulu-Natal</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <FormControl fullWidth size="small" disabled={!isEditing}>
+                <Select
+                  value={profileData.country}
+                  onChange={(e) => handleInputChange('country', e.target.value)}
+                  displayEmpty
+                  sx={{
+                    backgroundColor: isEditing ? 'white' : 'grey.100',
+                    '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                    '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      border: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  }}
+                >
+                  <MenuItem value="Country">Country</MenuItem>
+                  <MenuItem value="South Africa">South Africa</MenuItem>
+                  <MenuItem value="United Kingdom">United Kingdom</MenuItem>
+                  <MenuItem value="United States">United States</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Paper>
+  );
+
+  const renderBusinessProfile = () => (
+    <Paper
+      elevation={0}
+      sx={{
+        p: 3,
+        mb: 3,
+        border: '1px solid',
+        borderColor: 'divider',
+        borderRadius: 2,
+      }}
+    >
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 600,
+              color: 'text.primary',
+            }}
+          >
+            Owner Profile
+          </Typography>
+          <Chip
+            label="Business"
+            size="small"
+            sx={{
+              backgroundColor: 'secondary.light',
+              color: 'secondary.dark',
+              fontWeight: 500,
+            }}
+          />
+          <Chip
+            label="KYC Verified"
+            size="small"
+            sx={{
+              backgroundColor: 'success.light',
+              color: 'success.dark',
+              fontWeight: 500,
+            }}
+          />
+          <Chip
+            label="Admin"
+            size="small"
+            sx={{
+              backgroundColor: 'warning.light',
+              color: 'warning.dark',
+              fontWeight: 500,
+            }}
+          />
+        </Box>
+        <Button
+          variant="outlined"
+          onClick={handleEdit}
+          sx={{
+            borderColor: 'primary.main',
+            color: 'primary.main',
+            textTransform: 'none',
+            fontWeight: 500,
+            px: 3,
+            '&:hover': {
+              borderColor: 'primary.dark',
+              backgroundColor: 'primary.light',
+            },
+          }}
+        >
+          {isEditing ? 'Save' : 'Edit'}
+        </Button>
+      </Box>
+
+      <Grid container spacing={3}>
+        {/* Owner Details - Left Column */}
+        <Grid item xs={12} md={6}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                First Name
+              </Typography>
+              <TextField
+                fullWidth
+                value={profileData.firstName}
+                onChange={(e) => handleInputChange('firstName', e.target.value)}
+                disabled={!isEditing}
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: isEditing ? 'white' : 'grey.100',
+                    '& fieldset': { border: 'none' },
+                    '&:hover fieldset': { border: 'none' },
+                    '&.Mui-focused fieldset': {
+                      border: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                Last Name
+              </Typography>
+              <TextField
+                fullWidth
+                value={profileData.lastName}
+                onChange={(e) => handleInputChange('lastName', e.target.value)}
+                disabled={!isEditing}
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: isEditing ? 'white' : 'grey.100',
+                    '& fieldset': { border: 'none' },
+                    '&:hover fieldset': { border: 'none' },
+                    '&.Mui-focused fieldset': {
+                      border: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                Email ID
+              </Typography>
+              <TextField
+                fullWidth
+                value={profileData.emailId}
+                onChange={(e) => handleInputChange('emailId', e.target.value)}
+                disabled={!isEditing}
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: isEditing ? 'white' : 'grey.100',
+                    '& fieldset': { border: 'none' },
+                    '&:hover fieldset': { border: 'none' },
+                    '&.Mui-focused fieldset': {
+                      border: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                Mobile
+              </Typography>
+              <TextField
+                fullWidth
+                value={profileData.mobile}
+                onChange={(e) => handleInputChange('mobile', e.target.value)}
+                disabled={!isEditing}
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: isEditing ? 'white' : 'grey.100',
+                    '& fieldset': { border: 'none' },
+                    '&:hover fieldset': { border: 'none' },
+                    '&.Mui-focused fieldset': {
+                      border: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                Date of Birth
+              </Typography>
+              <TextField
+                fullWidth
+                value={profileData.dateOfBirth}
+                onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+                disabled={!isEditing}
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: isEditing ? 'white' : 'grey.100',
+                    '& fieldset': { border: 'none' },
+                    '&:hover fieldset': { border: 'none' },
+                    '&.Mui-focused fieldset': {
+                      border: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                Deposit Reference Code
+              </Typography>
+              <TextField
+                fullWidth
+                value={profileData.depositReferenceCode}
+                onChange={(e) => handleInputChange('depositReferenceCode', e.target.value)}
+                disabled={!isEditing}
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: isEditing ? 'white' : 'grey.100',
+                    '& fieldset': { border: 'none' },
+                    '&:hover fieldset': { border: 'none' },
+                    '&.Mui-focused fieldset': {
+                      border: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                ID Number
+              </Typography>
+              <TextField
+                fullWidth
+                value={profileData.idNumber}
+                onChange={(e) => handleInputChange('idNumber', e.target.value)}
+                disabled={!isEditing}
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: isEditing ? 'white' : 'grey.100',
+                    '& fieldset': { border: 'none' },
+                    '&:hover fieldset': { border: 'none' },
+                    '&.Mui-focused fieldset': {
+                      border: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                Passport Number
+              </Typography>
+              <TextField
+                fullWidth
+                value={profileData.passportNumber}
+                onChange={(e) => handleInputChange('passportNumber', e.target.value)}
+                disabled={!isEditing}
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: isEditing ? 'white' : 'grey.100',
+                    '& fieldset': { border: 'none' },
+                    '&:hover fieldset': { border: 'none' },
+                    '&.Mui-focused fieldset': {
+                      border: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+
+            {/* Owner Address */}
+            <Grid item xs={12}>
+              <Typography variant="body2" sx={{ mb: 2, fontWeight: 500 }}>
+                Address
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
+                    placeholder="Address Line 1"
+                    value={profileData.addressLine1}
+                    onChange={(e) => handleInputChange('addressLine1', e.target.value)}
+                    disabled={!isEditing}
+                    size="small"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        backgroundColor: isEditing ? 'white' : 'grey.100',
+                        '& fieldset': { border: 'none' },
+                        '&:hover fieldset': { border: 'none' },
+                        '&.Mui-focused fieldset': {
+                          border: '2px solid',
+                          borderColor: 'primary.main',
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
+                    placeholder="Address Line 2"
+                    value={profileData.addressLine2}
+                    onChange={(e) => handleInputChange('addressLine2', e.target.value)}
+                    disabled={!isEditing}
+                    size="small"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        backgroundColor: isEditing ? 'white' : 'grey.100',
+                        '& fieldset': { border: 'none' },
+                        '&:hover fieldset': { border: 'none' },
+                        '&.Mui-focused fieldset': {
+                          border: '2px solid',
+                          borderColor: 'primary.main',
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth size="small" disabled={!isEditing}>
+                    <Select
+                      value={profileData.city}
+                      onChange={(e) => handleInputChange('city', e.target.value)}
+                      displayEmpty
+                      sx={{
+                        backgroundColor: isEditing ? 'white' : 'grey.100',
+                        '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                        '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          border: '2px solid',
+                          borderColor: 'primary.main',
+                        },
+                      }}
+                    >
+                      <MenuItem value="City">City</MenuItem>
+                      <MenuItem value="Cape Town">Cape Town</MenuItem>
+                      <MenuItem value="Johannesburg">Johannesburg</MenuItem>
+                      <MenuItem value="Durban">Durban</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
+                    placeholder="Post code"
+                    value={profileData.postCode}
+                    onChange={(e) => handleInputChange('postCode', e.target.value)}
+                    disabled={!isEditing}
+                    size="small"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        backgroundColor: isEditing ? 'white' : 'grey.100',
+                        '& fieldset': { border: 'none' },
+                        '&:hover fieldset': { border: 'none' },
+                        '&.Mui-focused fieldset': {
+                          border: '2px solid',
+                          borderColor: 'primary.main',
+                        },
+                      },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth size="small" disabled={!isEditing}>
+                    <Select
+                      value={profileData.state}
+                      onChange={(e) => handleInputChange('state', e.target.value)}
+                      displayEmpty
+                      sx={{
+                        backgroundColor: isEditing ? 'white' : 'grey.100',
+                        '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                        '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          border: '2px solid',
+                          borderColor: 'primary.main',
+                        },
+                      }}
+                    >
+                      <MenuItem value="State">State</MenuItem>
+                      <MenuItem value="Western Cape">Western Cape</MenuItem>
+                      <MenuItem value="Gauteng">Gauteng</MenuItem>
+                      <MenuItem value="KwaZulu-Natal">KwaZulu-Natal</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth size="small" disabled={!isEditing}>
+                    <Select
+                      value={profileData.country}
+                      onChange={(e) => handleInputChange('country', e.target.value)}
+                      displayEmpty
+                      sx={{
+                        backgroundColor: isEditing ? 'white' : 'grey.100',
+                        '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                        '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          border: '2px solid',
+                          borderColor: 'primary.main',
+                        },
+                      }}
+                    >
+                      <MenuItem value="Country">Country</MenuItem>
+                      <MenuItem value="South Africa">South Africa</MenuItem>
+                      <MenuItem value="United Kingdom">United Kingdom</MenuItem>
+                      <MenuItem value="United States">United States</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+
+        {/* Company Details - Right Column */}
+        <Grid item xs={12} md={6}>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'primary.main' }}>
+            Company Details
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                Company Name
+              </Typography>
+              <TextField
+                fullWidth
+                value={profileData.companyName}
+                onChange={(e) => handleInputChange('companyName', e.target.value)}
+                disabled={!isEditing}
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: isEditing ? 'white' : 'grey.100',
+                    '& fieldset': { border: 'none' },
+                    '&:hover fieldset': { border: 'none' },
+                    '&.Mui-focused fieldset': {
+                      border: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                Position
+              </Typography>
+              <TextField
+                fullWidth
+                value={profileData.position}
+                onChange={(e) => handleInputChange('position', e.target.value)}
+                disabled={!isEditing}
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: isEditing ? 'white' : 'grey.100',
+                    '& fieldset': { border: 'none' },
+                    '&:hover fieldset': { border: 'none' },
+                    '&.Mui-focused fieldset': {
+                      border: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                Registration Number
+              </Typography>
+              <TextField
+                fullWidth
+                value={profileData.registrationNumber}
+                onChange={(e) => handleInputChange('registrationNumber', e.target.value)}
+                disabled={!isEditing}
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: isEditing ? 'white' : 'grey.100',
+                    '& fieldset': { border: 'none' },
+                    '&:hover fieldset': { border: 'none' },
+                    '&.Mui-focused fieldset': {
+                      border: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                Employment Status
+              </Typography>
+              <TextField
+                fullWidth
+                value={profileData.employmentStatus}
+                onChange={(e) => handleInputChange('employmentStatus', e.target.value)}
+                disabled={!isEditing}
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: isEditing ? 'white' : 'grey.100',
+                    '& fieldset': { border: 'none' },
+                    '&:hover fieldset': { border: 'none' },
+                    '&.Mui-focused fieldset': {
+                      border: '2px solid',
+                      borderColor: 'primary.main',
+                    },
+                  },
+                }}
+              />
+            </Grid>
+
+            {/* Company Address */}
+            <Grid item xs={12}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                Address
+              </Typography>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={profileData.sameAsOwnerAddress}
+                    onChange={(e) => handleInputChange('sameAsOwnerAddress', e.target.checked)}
+                    disabled={!isEditing}
+                    size="small"
+                  />
+                }
+                label="Same as owner address"
+                sx={{ mb: 2 }}
+              />
+              
+              {!profileData.sameAsOwnerAddress && (
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={4}>
+                    <TextField
+                      fullWidth
+                      placeholder="Address Line 1"
+                      value={profileData.addressLine1}
+                      onChange={(e) => handleInputChange('addressLine1', e.target.value)}
+                      disabled={!isEditing}
+                      size="small"
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          backgroundColor: isEditing ? 'white' : 'grey.100',
+                          '& fieldset': { border: 'none' },
+                          '&:hover fieldset': { border: 'none' },
+                          '&.Mui-focused fieldset': {
+                            border: '2px solid',
+                            borderColor: 'primary.main',
+                          },
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <TextField
+                      fullWidth
+                      placeholder="Address Line 2"
+                      value={profileData.addressLine2}
+                      onChange={(e) => handleInputChange('addressLine2', e.target.value)}
+                      disabled={!isEditing}
+                      size="small"
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          backgroundColor: isEditing ? 'white' : 'grey.100',
+                          '& fieldset': { border: 'none' },
+                          '&:hover fieldset': { border: 'none' },
+                          '&.Mui-focused fieldset': {
+                            border: '2px solid',
+                            borderColor: 'primary.main',
+                          },
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <FormControl fullWidth size="small" disabled={!isEditing}>
+                      <Select
+                        value={profileData.city}
+                        onChange={(e) => handleInputChange('city', e.target.value)}
+                        displayEmpty
+                        sx={{
+                          backgroundColor: isEditing ? 'white' : 'grey.100',
+                          '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                          '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                            border: '2px solid',
+                            borderColor: 'primary.main',
+                          },
+                        }}
+                      >
+                        <MenuItem value="City">City</MenuItem>
+                        <MenuItem value="Cape Town">Cape Town</MenuItem>
+                        <MenuItem value="Johannesburg">Johannesburg</MenuItem>
+                        <MenuItem value="Durban">Durban</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <TextField
+                      fullWidth
+                      placeholder="Post code"
+                      value={profileData.postCode}
+                      onChange={(e) => handleInputChange('postCode', e.target.value)}
+                      disabled={!isEditing}
+                      size="small"
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          backgroundColor: isEditing ? 'white' : 'grey.100',
+                          '& fieldset': { border: 'none' },
+                          '&:hover fieldset': { border: 'none' },
+                          '&.Mui-focused fieldset': {
+                            border: '2px solid',
+                            borderColor: 'primary.main',
+                          },
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <FormControl fullWidth size="small" disabled={!isEditing}>
+                      <Select
+                        value={profileData.state}
+                        onChange={(e) => handleInputChange('state', e.target.value)}
+                        displayEmpty
+                        sx={{
+                          backgroundColor: isEditing ? 'white' : 'grey.100',
+                          '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                          '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                            border: '2px solid',
+                            borderColor: 'primary.main',
+                          },
+                        }}
+                      >
+                        <MenuItem value="State">State</MenuItem>
+                        <MenuItem value="Western Cape">Western Cape</MenuItem>
+                        <MenuItem value="Gauteng">Gauteng</MenuItem>
+                        <MenuItem value="KwaZulu-Natal">KwaZulu-Natal</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <FormControl fullWidth size="small" disabled={!isEditing}>
+                      <Select
+                        value={profileData.country}
+                        onChange={(e) => handleInputChange('country', e.target.value)}
+                        displayEmpty
+                        sx={{
+                          backgroundColor: isEditing ? 'white' : 'grey.100',
+                          '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                          '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                            border: '2px solid',
+                            borderColor: 'primary.main',
+                          },
+                        }}
+                      >
+                        <MenuItem value="Country">Country</MenuItem>
+                        <MenuItem value="South Africa">South Africa</MenuItem>
+                        <MenuItem value="United Kingdom">United Kingdom</MenuItem>
+                        <MenuItem value="United States">United States</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                </Grid>
+              )}
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Paper>
+  );
+
   return (
     <Box>
       {/* Header */}
@@ -331,426 +1423,7 @@ const ClientProfile = () => {
       </Box>
 
       {/* Client Profile Form */}
-      <Paper
-        elevation={0}
-        sx={{
-          p: 3,
-          mb: 3,
-          border: '1px solid',
-          borderColor: 'divider',
-          borderRadius: 2,
-        }}
-      >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 600,
-              color: 'primary.main',
-            }}
-          >
-            Client Profile
-          </Typography>
-          <Button
-            variant="outlined"
-            onClick={handleEdit}
-            sx={{
-              borderColor: 'primary.main',
-              color: 'primary.main',
-              textTransform: 'none',
-              fontWeight: 500,
-              px: 3,
-              '&:hover': {
-                borderColor: 'primary.dark',
-                backgroundColor: 'primary.light',
-              },
-            }}
-          >
-            {isEditing ? 'Save' : 'Edit'}
-          </Button>
-        </Box>
-
-        <Grid container spacing={3}>
-          {/* Row 1 */}
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-              Name
-            </Typography>
-            <TextField
-              fullWidth
-              value={profileData.name}
-              onChange={(e) => handleInputChange('name', e.target.value)}
-              disabled={!isEditing}
-              size="small"
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  backgroundColor: isEditing ? 'white' : 'grey.100',
-                  '& fieldset': { border: 'none' },
-                  '&:hover fieldset': { border: 'none' },
-                  '&.Mui-focused fieldset': {
-                    border: '2px solid',
-                    borderColor: 'primary.main',
-                  },
-                },
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-              Other Names
-            </Typography>
-            <TextField
-              fullWidth
-              value={profileData.otherNames}
-              onChange={(e) => handleInputChange('otherNames', e.target.value)}
-              disabled={!isEditing}
-              size="small"
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  backgroundColor: isEditing ? 'white' : 'grey.100',
-                  '& fieldset': { border: 'none' },
-                  '&:hover fieldset': { border: 'none' },
-                  '&.Mui-focused fieldset': {
-                    border: '2px solid',
-                    borderColor: 'primary.main',
-                  },
-                },
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-              Mobile
-            </Typography>
-            <TextField
-              fullWidth
-              value={profileData.mobile}
-              onChange={(e) => handleInputChange('mobile', e.target.value)}
-              disabled={!isEditing}
-              size="small"
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  backgroundColor: isEditing ? 'white' : 'grey.100',
-                  '& fieldset': { border: 'none' },
-                  '&:hover fieldset': { border: 'none' },
-                  '&.Mui-focused fieldset': {
-                    border: '2px solid',
-                    borderColor: 'primary.main',
-                  },
-                },
-              }}
-            />
-          </Grid>
-
-          {/* Row 2 */}
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-              Profile Status
-            </Typography>
-            <TextField
-              fullWidth
-              value={profileData.profileStatus}
-              onChange={(e) => handleInputChange('profileStatus', e.target.value)}
-              disabled={!isEditing}
-              size="small"
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  backgroundColor: isEditing ? 'white' : 'grey.100',
-                  '& fieldset': { border: 'none' },
-                  '&:hover fieldset': { border: 'none' },
-                  '&.Mui-focused fieldset': {
-                    border: '2px solid',
-                    borderColor: 'primary.main',
-                  },
-                },
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-              Active Since
-            </Typography>
-            <TextField
-              fullWidth
-              value={profileData.activeSince}
-              onChange={(e) => handleInputChange('activeSince', e.target.value)}
-              disabled={!isEditing}
-              size="small"
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  backgroundColor: isEditing ? 'white' : 'grey.100',
-                  '& fieldset': { border: 'none' },
-                  '&:hover fieldset': { border: 'none' },
-                  '&.Mui-focused fieldset': {
-                    border: '2px solid',
-                    borderColor: 'primary.main',
-                  },
-                },
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-              Agent
-            </Typography>
-            <TextField
-              fullWidth
-              value={profileData.agent}
-              onChange={(e) => handleInputChange('agent', e.target.value)}
-              disabled={!isEditing}
-              size="small"
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  backgroundColor: isEditing ? 'white' : 'grey.100',
-                  '& fieldset': { border: 'none' },
-                  '&:hover fieldset': { border: 'none' },
-                  '&.Mui-focused fieldset': {
-                    border: '2px solid',
-                    borderColor: 'primary.main',
-                  },
-                },
-              }}
-            />
-          </Grid>
-
-          {/* Row 3 */}
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-              ID Type
-            </Typography>
-            <TextField
-              fullWidth
-              value={profileData.idType}
-              onChange={(e) => handleInputChange('idType', e.target.value)}
-              disabled={!isEditing}
-              size="small"
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  backgroundColor: isEditing ? 'white' : 'grey.100',
-                  '& fieldset': { border: 'none' },
-                  '&:hover fieldset': { border: 'none' },
-                  '&.Mui-focused fieldset': {
-                    border: '2px solid',
-                    borderColor: 'primary.main',
-                  },
-                },
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-              Address Type
-            </Typography>
-            <TextField
-              fullWidth
-              value={profileData.addressType}
-              onChange={(e) => handleInputChange('addressType', e.target.value)}
-              disabled={!isEditing}
-              size="small"
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  backgroundColor: isEditing ? 'white' : 'grey.100',
-                  '& fieldset': { border: 'none' },
-                  '&:hover fieldset': { border: 'none' },
-                  '&.Mui-focused fieldset': {
-                    border: '2px solid',
-                    borderColor: 'primary.main',
-                  },
-                },
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-              Employment Status
-            </Typography>
-            <TextField
-              fullWidth
-              value={profileData.employmentStatus}
-              onChange={(e) => handleInputChange('employmentStatus', e.target.value)}
-              disabled={!isEditing}
-              size="small"
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  backgroundColor: isEditing ? 'white' : 'grey.100',
-                  '& fieldset': { border: 'none' },
-                  '&:hover fieldset': { border: 'none' },
-                  '&.Mui-focused fieldset': {
-                    border: '2px solid',
-                    borderColor: 'primary.main',
-                  },
-                },
-              }}
-            />
-          </Grid>
-
-          {/* Address Row */}
-          <Grid item xs={12}>
-            <Typography variant="body2" sx={{ mb: 2, fontWeight: 500 }}>
-              Address
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={2}>
-                <TextField
-                  fullWidth
-                  placeholder="Street"
-                  value={profileData.street}
-                  onChange={(e) => handleInputChange('street', e.target.value)}
-                  disabled={!isEditing}
-                  size="small"
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: isEditing ? 'white' : 'grey.100',
-                      '& fieldset': { border: 'none' },
-                      '&:hover fieldset': { border: 'none' },
-                      '&.Mui-focused fieldset': {
-                        border: '2px solid',
-                        borderColor: 'primary.main',
-                      },
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={2}>
-                <TextField
-                  fullWidth
-                  placeholder="Suburb"
-                  value={profileData.suburb}
-                  onChange={(e) => handleInputChange('suburb', e.target.value)}
-                  disabled={!isEditing}
-                  size="small"
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: isEditing ? 'white' : 'grey.100',
-                      '& fieldset': { border: 'none' },
-                      '&:hover fieldset': { border: 'none' },
-                      '&.Mui-focused fieldset': {
-                        border: '2px solid',
-                        borderColor: 'primary.main',
-                      },
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={2}>
-                <TextField
-                  fullWidth
-                  placeholder="City"
-                  value={profileData.city}
-                  onChange={(e) => handleInputChange('city', e.target.value)}
-                  disabled={!isEditing}
-                  size="small"
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: isEditing ? 'white' : 'grey.100',
-                      '& fieldset': { border: 'none' },
-                      '&:hover fieldset': { border: 'none' },
-                      '&.Mui-focused fieldset': {
-                        border: '2px solid',
-                        borderColor: 'primary.main',
-                      },
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={2}>
-                <TextField
-                  fullWidth
-                  placeholder="Post code"
-                  value={profileData.postCode}
-                  onChange={(e) => handleInputChange('postCode', e.target.value)}
-                  disabled={!isEditing}
-                  size="small"
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: isEditing ? 'white' : 'grey.100',
-                      '& fieldset': { border: 'none' },
-                      '&:hover fieldset': { border: 'none' },
-                      '&.Mui-focused fieldset': {
-                        border: '2px solid',
-                        borderColor: 'primary.main',
-                      },
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={2}>
-                <TextField
-                  fullWidth
-                  placeholder="Province"
-                  value={profileData.province}
-                  onChange={(e) => handleInputChange('province', e.target.value)}
-                  disabled={!isEditing}
-                  size="small"
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: isEditing ? 'white' : 'grey.100',
-                      '& fieldset': { border: 'none' },
-                      '&:hover fieldset': { border: 'none' },
-                      '&.Mui-focused fieldset': {
-                        border: '2px solid',
-                        borderColor: 'primary.main',
-                      },
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={2}>
-                <TextField
-                  fullWidth
-                  placeholder="Country"
-                  value={profileData.country}
-                  onChange={(e) => handleInputChange('country', e.target.value)}
-                  disabled={!isEditing}
-                  size="small"
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: isEditing ? 'white' : 'grey.100',
-                      '& fieldset': { border: 'none' },
-                      '&:hover fieldset': { border: 'none' },
-                      '&.Mui-focused fieldset': {
-                        border: '2px solid',
-                        borderColor: 'primary.main',
-                      },
-                    },
-                  }}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-
-          {/* User Role */}
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-              User Role
-            </Typography>
-            <TextField
-              fullWidth
-              value={profileData.userRole}
-              onChange={(e) => handleInputChange('userRole', e.target.value)}
-              disabled={!isEditing}
-              size="small"
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  backgroundColor: isEditing ? 'white' : 'grey.100',
-                  '& fieldset': { border: 'none' },
-                  '&:hover fieldset': { border: 'none' },
-                  '&.Mui-focused fieldset': {
-                    border: '2px solid',
-                    borderColor: 'primary.main',
-                  },
-                },
-              }}
-            />
-          </Grid>
-        </Grid>
-      </Paper>
+      {client.accountType === 'business' ? renderBusinessProfile() : renderIndividualProfile()}
 
       {/* Transaction History Section */}
       <Paper
